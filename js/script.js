@@ -1,10 +1,27 @@
 // ============================================
 // MOULT AI - Main Application
-// Features: Secure, Multi-provider, Multi-lang, PWA ready
+// Features: Secure, Multi-provider, Multi-lang, PWA ready, Streaming
 // ============================================
 
 // Configuration
 const PROXY_URL = 'https://api-moult-ai.lombard-web-services.com';
+
+// Modèles disponibles
+const AVAILABLE_MODELS = {
+    nemotron: [
+        'nvidia/nemotron-3-nano-30b-a3b:free',
+        'nvidia/nemotron-3.5-content-safety:free',
+        'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
+        'nvidia/nemotron-nano-12b-v2-vl:free',
+        'nvidia/nemotron-3-ultra-550b-a55b:free'
+    ],
+    other: [
+        'poolside/laguna-m.1:free',
+        'google/gemma-4-26b-a4b-it:free',
+        'qwen/qwen3-next-80b-a3b-instruct:free',
+        'nousresearch/hermes-3-llama-3.1-405b:free'
+    ]
+};
 
 // Translations
 const translations = {
@@ -19,7 +36,11 @@ const translations = {
         exportSuccess: 'Export réussi',
         importSuccess: 'Import réussi',
         errorNetwork: 'Erreur réseau',
-        errorApi: 'Erreur API'
+        errorApi: 'Erreur API',
+        streaming: 'Mode streaming',
+        reasoning: 'Activer le raisonnement',
+        modelNemotron: 'NVIDIA Nemotron',
+        modelOther: 'Autres modèles'
     },
     en: {
         welcome: 'How can I help you today?',
@@ -32,7 +53,11 @@ const translations = {
         exportSuccess: 'Export successful',
         importSuccess: 'Import successful',
         errorNetwork: 'Network error',
-        errorApi: 'API error'
+        errorApi: 'API error',
+        streaming: 'Streaming mode',
+        reasoning: 'Enable reasoning',
+        modelNemotron: 'NVIDIA Nemotron',
+        modelOther: 'Other models'
     },
     es: {
         welcome: '¿Cómo puedo ayudarte hoy?',
@@ -45,7 +70,11 @@ const translations = {
         exportSuccess: 'Exportación exitosa',
         importSuccess: 'Importación exitosa',
         errorNetwork: 'Error de red',
-        errorApi: 'Error de API'
+        errorApi: 'Error de API',
+        streaming: 'Modo streaming',
+        reasoning: 'Activar razonamiento',
+        modelNemotron: 'NVIDIA Nemotron',
+        modelOther: 'Otros modelos'
     },
     de: {
         welcome: 'Wie kann ich Ihnen helfen?',
@@ -58,7 +87,11 @@ const translations = {
         exportSuccess: 'Export erfolgreich',
         importSuccess: 'Import erfolgreich',
         errorNetwork: 'Netzwerkfehler',
-        errorApi: 'API-Fehler'
+        errorApi: 'API-Fehler',
+        streaming: 'Streaming-Modus',
+        reasoning: 'Reasoning aktivieren',
+        modelNemotron: 'NVIDIA Nemotron',
+        modelOther: 'Andere Modelle'
     },
     it: {
         welcome: 'Come posso aiutarti oggi?',
@@ -71,7 +104,11 @@ const translations = {
         exportSuccess: 'Esportazione riuscita',
         importSuccess: 'Importazione riuscita',
         errorNetwork: 'Errore di rete',
-        errorApi: 'Errore API'
+        errorApi: 'Errore API',
+        streaming: 'Modalità streaming',
+        reasoning: 'Attiva reasoning',
+        modelNemotron: 'NVIDIA Nemotron',
+        modelOther: 'Altri modelli'
     },
     pt: {
         welcome: 'Como posso ajudar hoje?',
@@ -84,7 +121,11 @@ const translations = {
         exportSuccess: 'Exportação bem-sucedida',
         importSuccess: 'Importação bem-sucedida',
         errorNetwork: 'Erro de rede',
-        errorApi: 'Erro de API'
+        errorApi: 'Erro de API',
+        streaming: 'Modo streaming',
+        reasoning: 'Ativar reasoning',
+        modelNemotron: 'NVIDIA Nemotron',
+        modelOther: 'Outros modelos'
     },
     ja: {
         welcome: 'どのようにお手伝いできますか？',
@@ -97,7 +138,11 @@ const translations = {
         exportSuccess: 'エクスポート成功',
         importSuccess: 'インポート成功',
         errorNetwork: 'ネットワークエラー',
-        errorApi: 'APIエラー'
+        errorApi: 'APIエラー',
+        streaming: 'ストリーミングモード',
+        reasoning: '推論を有効化',
+        modelNemotron: 'NVIDIA Nemotron',
+        modelOther: 'その他のモデル'
     },
     zh: {
         welcome: '我能如何帮助您？',
@@ -110,7 +155,11 @@ const translations = {
         exportSuccess: '导出成功',
         importSuccess: '导入成功',
         errorNetwork: '网络错误',
-        errorApi: 'API错误'
+        errorApi: 'API错误',
+        streaming: '流式模式',
+        reasoning: '启用推理',
+        modelNemotron: 'NVIDIA Nemotron',
+        modelOther: '其他模型'
     }
 };
 
@@ -121,6 +170,9 @@ let currentConversationId = null;
 let conversations = JSON.parse(localStorage.getItem('conversations')) || [];
 let currentMessages = [];
 let isLoading = false;
+let isStreaming = localStorage.getItem('streaming') === 'true';
+let enableReasoning = localStorage.getItem('reasoning') !== 'false';
+let currentModel = localStorage.getItem('currentModel') || 'nvidia/nemotron-3-nano-30b-a3b:free';
 
 // DOM Elements
 const sidebar = document.getElementById('sidebar');
@@ -154,12 +206,49 @@ function init() {
     loadConversations();
     setupEventListeners();
     loadModels();
+    populateModelSelect();
     
     if (conversations.length === 0) {
         createNewConversation();
     } else {
         loadConversation(conversations[0].id);
     }
+}
+
+// Populate model selector
+function populateModelSelect() {
+    if (!modelSelect) return;
+    
+    modelSelect.innerHTML = '';
+    
+    // Groupe NVIDIA Nemotron
+    const nemotronGroup = document.createElement('optgroup');
+    nemotronGroup.label = translations[currentLanguage].modelNemotron || 'NVIDIA Nemotron';
+    AVAILABLE_MODELS.nemotron.forEach(model => {
+        const option = document.createElement('option');
+        option.value = model;
+        option.textContent = model.replace('nvidia/', '').replace(':free', '');
+        if (model === currentModel) option.selected = true;
+        nemotronGroup.appendChild(option);
+    });
+    modelSelect.appendChild(nemotronGroup);
+    
+    // Groupe autres modèles
+    const otherGroup = document.createElement('optgroup');
+    otherGroup.label = translations[currentLanguage].modelOther || 'Autres modèles';
+    AVAILABLE_MODELS.other.forEach(model => {
+        const option = document.createElement('option');
+        option.value = model;
+        option.textContent = model.replace(':free', '');
+        if (model === currentModel) option.selected = true;
+        otherGroup.appendChild(option);
+    });
+    modelSelect.appendChild(otherGroup);
+    
+    modelSelect.addEventListener('change', (e) => {
+        currentModel = e.target.value;
+        localStorage.setItem('currentModel', currentModel);
+    });
 }
 
 // Load available models from server
@@ -202,6 +291,7 @@ function applyLanguage() {
     langSpan.textContent = currentLanguage.toUpperCase();
     
     localStorage.setItem('language', currentLanguage);
+    populateModelSelect();
 }
 
 // Show notification
@@ -269,6 +359,7 @@ function createNewConversation() {
     saveConversations();
     loadConversations();
     loadConversation(newConversation.id);
+    showNotification('Nouvelle conversation', 'success');
 }
 
 function loadConversation(conversationId) {
@@ -312,6 +403,7 @@ function addMessageToUI(role, content, save = true) {
         currentMessages.push({ role, content, timestamp: new Date().toISOString() });
         saveCurrentConversation();
     }
+    return messageDiv;
 }
 
 function saveCurrentConversation() {
@@ -346,7 +438,7 @@ window.deleteConversation = function(conversationId) {
 };
 
 // ============================================
-// CHAT FUNCTIONALITY
+// CHAT FUNCTIONALITY WITH STREAMING
 // ============================================
 async function sendMessage() {
     const message = userInput.value.trim();
@@ -365,33 +457,101 @@ async function sendMessage() {
     
     const requestBody = {
         message: message,
-        provider: modelSelect.value,
+        provider: modelSelect.value ? 'openrouter' : 'openrouter',
         mode: modeSelect.value,
-        history: currentMessages.slice(-10) // Last 10 messages for context
+        model: currentModel,
+        reasoning: enableReasoning,
+        stream: isStreaming,
+        history: currentMessages.slice(-10)
     };
     
     try {
-        const response = await fetch(`${PROXY_URL}/api/chat`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(requestBody)
-        });
-        
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error || `HTTP ${response.status}`);
+        if (isStreaming) {
+            await sendMessageStream(requestBody);
+        } else {
+            await sendMessageNormal(requestBody);
         }
-        
-        const data = await response.json();
-        typingIndicator.style.display = 'none';
-        addMessageToUI('assistant', data.message);
-        
     } catch (error) {
         typingIndicator.style.display = 'none';
         addMessageToUI('assistant', `❌ ${translations[currentLanguage].errorApi}: ${error.message}`);
     } finally {
         isLoading = false;
     }
+}
+
+async function sendMessageNormal(requestBody) {
+    const response = await fetch(`${PROXY_URL}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
+    });
+    
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || `HTTP ${response.status}`);
+    }
+    
+    const data = await response.json();
+    typingIndicator.style.display = 'none';
+    addMessageToUI('assistant', data.message);
+    
+    if (data.reasoning) {
+        console.log('Reasoning:', data.reasoning);
+    }
+}
+
+async function sendMessageStream(requestBody) {
+    const response = await fetch(`${PROXY_URL}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
+    });
+    
+    if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+    }
+    
+    typingIndicator.style.display = 'none';
+    
+    // Créer un message assistant vide
+    const assistantMessageDiv = addMessageToUI('assistant', '', true);
+    const contentDiv = assistantMessageDiv.querySelector('.message-content');
+    contentDiv.innerHTML = '';
+    
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let fullContent = '';
+    
+    while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n');
+        
+        for (const line of lines) {
+            if (line.startsWith('data: ')) {
+                const data = line.slice(6);
+                if (data === '[DONE]') continue;
+                
+                try {
+                    const parsed = JSON.parse(data);
+                    const content = parsed.choices[0]?.delta?.content || '';
+                    if (content) {
+                        fullContent += content;
+                        contentDiv.innerHTML = fullContent.replace(/\n/g, '<br>');
+                        scrollToBottom();
+                    }
+                } catch (e) {
+                    // Ignorer les erreurs de parsing
+                }
+            }
+        }
+    }
+    
+    // Sauvegarder le message complet
+    currentMessages[currentMessages.length - 1].content = fullContent;
+    saveCurrentConversation();
 }
 
 function clearConversation() {
@@ -578,21 +738,27 @@ function setupEventListeners() {
     // Export button
     document.getElementById('exportAllBtn')?.addEventListener('click', exportAllConversations);
     
-    // Provider change badge
-    modelSelect.addEventListener('change', (e) => {
-        const provider = e.target.value;
-        const badgeIcon = providerBadge.querySelector('i');
-        const badgeText = providerBadge.querySelector('span');
-        
-        const icons = {
-            openrouter: 'fa-network-wired',
-            hf: 'fa-robot',
-            groq: 'fa-bolt'
-        };
-        
-        badgeIcon.className = `fas ${icons[provider] || 'fa-microchip'}`;
-        badgeText.textContent = provider.charAt(0).toUpperCase() + provider.slice(1);
-    });
+    // Streaming toggle dans les paramètres
+    const streamingToggle = document.getElementById('streamingToggle');
+    if (streamingToggle) {
+        streamingToggle.addEventListener('change', (e) => {
+            isStreaming = e.target.checked;
+            localStorage.setItem('streaming', isStreaming);
+            showNotification(`Streaming ${isStreaming ? 'activé' : 'désactivé'}`, 'success');
+        });
+        streamingToggle.checked = isStreaming;
+    }
+    
+    // Reasoning toggle dans les paramètres
+    const reasoningToggle = document.getElementById('reasoningToggle');
+    if (reasoningToggle) {
+        reasoningToggle.addEventListener('change', (e) => {
+            enableReasoning = e.target.checked;
+            localStorage.setItem('reasoning', enableReasoning);
+            showNotification(`Raisonnement ${enableReasoning ? 'activé' : 'désactivé'}`, 'success');
+        });
+        reasoningToggle.checked = enableReasoning;
+    }
 }
 
 // Start the app
