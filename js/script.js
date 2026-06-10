@@ -4,7 +4,7 @@
 // ============================================
 
 // Configuration
-const PROXY_URL = 'http://VOTRE_IP_SERVEUR:3000';
+const PROXY_URL = 'https://api-moult-ai.lombard-web-services.com';
 
 // Translations
 const translations = {
