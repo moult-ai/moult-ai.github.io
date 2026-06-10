@@ -3,10 +3,10 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-console.log('🔑 API Keys status:');
-console.log(`   OpenRouter: ${process.env.OPENROUTER_API_KEY ? '✅ Configurée' : '❌ Non configurée'}`);
-console.log(`   Groq:       ${process.env.GROQ_API_KEY ? '✅ Configurée' : '❌ Non configurée'}`);
-console.log(`   HuggingFace: ${process.env.HF_API_KEY ? '✅ Configurée' : '❌ Non configurée'}`);
+console.log('\n🔑 API Keys status:');
+console.log(`   OpenRouter:  ${process.env.OPENROUTER_API_KEY ? '✅ Configurée' : '❌ Non configurée'}`);
+console.log(`   Groq:        ${process.env.GROQ_API_KEY ? '✅ Configurée' : '❌ Non configurée'}`);
+console.log(`   HuggingFace: ${process.env.HF_API_KEY ? '✅ Configurée' : '❌ Non configurée'}\n`);
 
 // Modèles NVIDIA Nemotron pour OpenRouter
 const NEMOTRON_MODELS = [
@@ -40,7 +40,8 @@ const PROVIDERS = {
         ]
     },
     hf: {
-        url: 'https://api-inference.huggingface.co/v1/chat/completions',
+        // URL CORRECTE pour HuggingFace (format OpenAI)
+        url: 'https://router.huggingface.co/v1/chat/completions',
         key: process.env.HF_API_KEY,
         models: [
             'Qwen/Qwen2.5-72B-Instruct',
@@ -137,8 +138,14 @@ const server = createServer((req, res) => {
                 
                 const providerConfig = PROVIDERS[provider];
                 if (!providerConfig.key) {
-                    res.writeHead(503, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ error: `${provider} API key not configured` }));
+                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({
+                        message: `💡 ${provider.toUpperCase()} n'est pas configuré.\n\nPour l'utiliser, ajoutez votre clé API dans le fichier .env du serveur.\n\nModèles disponibles: ${providerConfig.models.join(', ')}`,
+                        provider: provider,
+                        model: model || providerConfig.models[0],
+                        mode: mode,
+                        error: true
+                    }));
                     return;
                 }
                 
@@ -158,10 +165,11 @@ const server = createServer((req, res) => {
                 
                 // Ajouter l'historique
                 if (history && history.length > 0) {
-                    messages.push(...history.slice(-10));
+                    const historyMessages = history.filter(h => h.role && h.content).slice(-10);
+                    messages.push(...historyMessages);
                 }
                 
-                // Payload commun
+                // Payload commun (format OpenAI)
                 const payload = {
                     model: selectedModel,
                     messages: messages,
@@ -175,20 +183,20 @@ const server = createServer((req, res) => {
                     payload.reasoning = { enabled: true };
                 }
                 
-                // Headers spécifiques par provider
+                // Headers
                 const headers = {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${providerConfig.key}`
                 };
                 
                 if (provider === 'openrouter') {
-                    headers['Authorization'] = `Bearer ${providerConfig.key}`;
                     headers['HTTP-Referer'] = 'https://api-moult-ai.lombard-web-services.com';
                     headers['X-Title'] = 'Moult AI';
-                } else if (provider === 'groq') {
-                    headers['Authorization'] = `Bearer ${providerConfig.key}`;
-                } else if (provider === 'hf') {
-                    headers['Authorization'] = `Bearer ${providerConfig.key}`;
                 }
+                
+                const apiUrl = providerConfig.url;
+                
+                console.log(`📡 ${provider.toUpperCase()} | ${selectedModel} | mode: ${mode}`);
                 
                 // Mode streaming
                 if (stream) {
@@ -200,11 +208,12 @@ const server = createServer((req, res) => {
                     });
                     
                     const https = await import('https');
+                    const urlObj = new URL(apiUrl);
                     const postData = JSON.stringify(payload);
                     
                     const options = {
-                        hostname: new URL(providerConfig.url).hostname,
-                        path: new URL(providerConfig.url).pathname,
+                        hostname: urlObj.hostname,
+                        path: urlObj.pathname,
                         method: 'POST',
                         headers: {
                             ...headers,
@@ -213,12 +222,8 @@ const server = createServer((req, res) => {
                     };
                     
                     const proxyReq = https.request(options, (proxyRes) => {
-                        proxyRes.on('data', chunk => {
-                            res.write(chunk);
-                        });
-                        proxyRes.on('end', () => {
-                            res.end();
-                        });
+                        proxyRes.on('data', chunk => res.write(chunk));
+                        proxyRes.on('end', () => res.end());
                     });
                     
                     proxyReq.on('error', (e) => {
@@ -233,19 +238,18 @@ const server = createServer((req, res) => {
                 
                 // Mode non-streaming
                 const https = await import('https');
+                const urlObj = new URL(apiUrl);
                 const postData = JSON.stringify(payload);
                 
                 const options = {
-                    hostname: new URL(providerConfig.url).hostname,
-                    path: new URL(providerConfig.url).pathname,
+                    hostname: urlObj.hostname,
+                    path: urlObj.pathname,
                     method: 'POST',
                     headers: {
                         ...headers,
                         'Content-Length': Buffer.byteLength(postData)
                     }
                 };
-                
-                console.log(`📡 Appel ${provider} | modèle: ${selectedModel}`);
                 
                 const apiResponse = await new Promise((resolve, reject) => {
                     const req = https.request(options, (res) => {
@@ -261,38 +265,54 @@ const server = createServer((req, res) => {
                 let responseData;
                 
                 if (apiResponse.statusCode === 200) {
-                    const result = JSON.parse(apiResponse.data);
-                    let assistantMessage = '';
-                    let reasoningText = null;
-                    
-                    if (result.choices && result.choices[0]) {
-                        assistantMessage = result.choices[0].message.content;
-                        if (result.choices[0].message.reasoning_details) {
-                            reasoningText = result.choices[0].message.reasoning_details;
+                    try {
+                        const result = JSON.parse(apiResponse.data);
+                        let assistantMessage = '';
+                        let reasoningText = null;
+                        
+                        if (result.choices && result.choices[0]) {
+                            assistantMessage = result.choices[0].message.content;
+                            if (result.choices[0].message.reasoning_details) {
+                                reasoningText = result.choices[0].message.reasoning_details;
+                            }
+                        } else if (result.generated_text) {
+                            assistantMessage = result.generated_text;
+                        } else {
+                            assistantMessage = "Réponse reçue (format inattendu)";
                         }
+                        
+                        responseData = {
+                            message: assistantMessage,
+                            provider: provider,
+                            model: selectedModel,
+                            mode: mode
+                        };
+                        
+                        if (reasoningText) {
+                            responseData.reasoning = reasoningText;
+                        }
+                        
+                        console.log(`✅ ${provider.toUpperCase()} a répondu`);
+                    } catch (e) {
+                        console.error(`Erreur parsing ${provider}:`, e.message);
+                        responseData = {
+                            message: `Erreur de parsing: ${apiResponse.data.substring(0, 200)}`,
+                            provider: provider,
+                            model: selectedModel,
+                            error: true
+                        };
                     }
-                    
-                    responseData = {
-                        message: assistantMessage,
-                        provider: provider,
-                        model: selectedModel,
-                        mode: mode
-                    };
-                    
-                    if (reasoningText) {
-                        responseData.reasoning = reasoningText;
-                    }
-                    
-                    console.log(`✅ Réponse reçue de ${provider}`);
                 } else {
                     let errorDetail = apiResponse.data;
                     try {
                         const errorJson = JSON.parse(apiResponse.data);
-                        errorDetail = errorJson.error?.message || errorDetail;
+                        errorDetail = errorJson.error?.message || errorJson.detail || errorDetail;
                     } catch(e) {}
                     
+                    console.error(`❌ ${provider} erreur: ${apiResponse.statusCode}`);
+                    
                     responseData = {
-                        message: `❌ Erreur ${provider}: ${errorDetail}`,
+                        message: `❌ Erreur ${provider.toUpperCase()} (${apiResponse.statusCode}): ${errorDetail}`,
                         provider: provider,
                         model: selectedModel,
                         error: true
@@ -317,14 +337,13 @@ const server = createServer((req, res) => {
 
 const port = parseInt(process.env.PORT || '3000');
 server.listen(port, '0.0.0.0', () => {
-    console.log(`\n✅ Moult AI Proxy running on http://localhost:${port}`);
-    console.log(`   Health check: http://localhost:${port}/health`);
-    console.log(`\n📡 Providers disponibles:`);
-    console.log(`   OpenRouter: ${PROVIDERS.openrouter.key ? '✅' : '❌'} (${PROVIDERS.openrouter.models.length} modèles)`);
-    console.log(`   Groq:       ${PROVIDERS.groq.key ? '✅' : '❌'} (${PROVIDERS.groq.models.length} modèles)`);
+    console.log(`✅ Moult AI Proxy running on http://localhost:${port}`);
+    console.log(`   Health check: http://localhost:${port}/health\n`);
+    console.log(`📡 Providers:`);
+    console.log(`   OpenRouter:  ${PROVIDERS.openrouter.key ? '✅' : '❌'} (${PROVIDERS.openrouter.models.length} modèles)`);
+    console.log(`   Groq:        ${PROVIDERS.groq.key ? '✅' : '❌'} (${PROVIDERS.groq.models.length} modèles)`);
     console.log(`   HuggingFace: ${PROVIDERS.hf.key ? '✅' : '❌'} (${PROVIDERS.hf.models.length} modèles)`);
-    console.log(`\n🧠 Modèles NVIDIA Nemotron disponibles: ${NEMOTRON_MODELS.length}`);
-    console.log(`   ${NEMOTRON_MODELS[0]}\n`);
+    console.log(`\n🧠 NVIDIA Nemotron: ${NEMOTRON_MODELS.length} modèles\n`);
 });
 
 process.on('SIGTERM', () => {
