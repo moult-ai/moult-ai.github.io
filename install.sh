@@ -3,7 +3,7 @@
 # ============================================
 # MOULT AI PROXY - Installation Script
 # Bun + Hono + PM2 + Nginx
-# For: api-moult-ai.my_domain.tld
+# For: api-moult-ai.domain.tld
 # ============================================
 
 set -e
@@ -21,7 +21,7 @@ echo -e "${BLUE}
 ║                                                                               ║
 ║                    MOULT AI PROXY - INSTALLATION SCRIPT                       ║
 ║                    Bun + Hono + PM2 + Nginx                                   ║
-║                    api-moult-ai.lombard-web-services.com                      ║
+║                    api-moult-ai.domain.tld                      ║
 ║                                                                               ║
 ╚═══════════════════════════════════════════════════════════════════════════════╝
 ${NC}"
