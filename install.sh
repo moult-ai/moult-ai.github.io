@@ -3,7 +3,7 @@
 # ============================================
 # MOULT AI PROXY - Installation Script
 # Bun + Hono + PM2 + Nginx
-# For: api-moult-ai.lombard-web-services.com
+# For: api-moult-ai.my_domain.tld
 # ============================================
 
 set -e
