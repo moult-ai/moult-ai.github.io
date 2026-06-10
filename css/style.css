@@ -75,12 +75,15 @@
 }
 
 body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Roboto', 'Inter', sans-serif;
     background: var(--bg-primary);
     color: var(--text-primary);
     overflow: hidden;
     transition: background 0.3s ease, color 0.3s ease;
 }
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
 
 /* Scrollbar */
 ::-webkit-scrollbar {
@@ -134,7 +137,7 @@ body {
 .sidebar.collapsed .search-btn span,
 .sidebar.collapsed .settings-btn span,
 .sidebar.collapsed .conversation-info,
-.sidebar.collapsed .lang-toggle span {
+.sidebar.collapsed .sidebar-footer {
     display: none;
 }
 
@@ -166,12 +169,12 @@ body {
 .logo-icon {
     width: 36px;
     height: 36px;
-    background: var(--accent-primary);
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    background: transparent;
 }
 
 .logo-img {
@@ -265,7 +268,8 @@ body {
 }
 
 .conversation-title:hover {
-    text-decoration: underline;
+    opacity: 0.8;
+    text-decoration: none;
 }
 
 .conversation-date {
@@ -300,6 +304,7 @@ body {
     display: flex;
     justify-content: space-between;
     gap: 8px;
+    transition: opacity 0.3s ease;
 }
 
 .sidebar-footer button {
@@ -320,6 +325,35 @@ body {
 .sidebar-footer button:hover {
     background: var(--accent-primary);
     color: white;
+}
+
+/* Sidebar Toggle Button - seulement visible quand replié */
+.sidebar-toggle {
+    position: absolute;
+    right: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    background: var(--accent-primary);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    color: white;
+    font-size: 10px;
+    box-shadow: var(--shadow-sm);
+}
+
+.sidebar.collapsed .sidebar-toggle {
+    display: flex;
+}
+
+.sidebar:not(.collapsed) .sidebar-toggle {
+    display: none;
 }
 
 /* Main Content */
@@ -370,15 +404,37 @@ body {
     font-weight: 600;
 }
 
+/* Style élégant pour les selects */
 .model-selector select,
 .mode-selector select {
-    padding: 6px 12px;
+    padding: 8px 28px 8px 12px;
     background: var(--glass-bg);
     border: 1px solid var(--border-color);
-    border-radius: 20px;
+    border-radius: 24px;
     color: var(--text-primary);
     cursor: pointer;
     font-size: 0.8rem;
+    font-weight: 500;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px;
+    transition: all 0.2s;
+}
+
+.model-selector select:hover,
+.mode-selector select:hover {
+    border-color: #667eea;
+    background-color: var(--bg-secondary);
+}
+
+.model-selector select:focus,
+.mode-selector select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
 }
 
 .clear-chat-btn {
@@ -413,8 +469,8 @@ body {
 }
 
 .static-logo {
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
     margin: 0 auto 24px;
 }
 
@@ -422,7 +478,7 @@ body {
     width: 100%;
     height: 100%;
     background: var(--accent-primary);
-    border-radius: 24px;
+    border-radius: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -480,6 +536,7 @@ body {
     border-radius: 18px;
     line-height: 1.4;
     font-size: 0.9rem;
+    font-family: 'Roboto', sans-serif;
 }
 
 .message.user .message-content {
@@ -516,27 +573,35 @@ body {
     border: 1px solid var(--border-color);
     border-radius: 20px;
     color: var(--text-primary);
-    font-family: inherit;
+    font-family: 'Roboto', sans-serif;
     font-size: 0.9rem;
     resize: none;
     transition: all 0.2s;
     max-height: 120px;
     overflow-y: auto;
     scrollbar-width: thin;
+    padding-right: 20px;
 }
 
-/* Textarea scrollbar styling - no scroll on single line */
+/* Scrollbar style pour textarea - décalée à gauche */
 .input-container textarea::-webkit-scrollbar {
     width: 4px;
 }
 
 .input-container textarea::-webkit-scrollbar-track {
     background: transparent;
+    margin: 5px 0;
 }
 
 .input-container textarea::-webkit-scrollbar-thumb {
     background: var(--scrollbar-thumb);
     border-radius: 4px;
+}
+
+/* Cacher les flèches de number input */
+.input-container textarea::-webkit-inner-spin-button,
+.input-container textarea::-webkit-outer-spin-button {
+    display: none;
 }
 
 .input-container textarea:focus {
@@ -697,12 +762,13 @@ body {
 
 /* Settings Section */
 .settings-section {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
 .settings-section h4 {
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     font-size: 0.9rem;
+    font-weight: 600;
 }
 
 .settings-section label {
@@ -714,12 +780,65 @@ body {
 
 .settings-section select {
     width: 100%;
-    padding: 8px 12px;
+    padding: 8px 28px 8px 12px;
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
-    border-radius: 10px;
+    border-radius: 24px;
     color: var(--text-primary);
     font-size: 0.85rem;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 14px;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    cursor: pointer;
+}
+
+.toggle-switch input {
+    display: none;
+}
+
+.toggle-switch .slider {
+    width: 44px;
+    height: 22px;
+    background: var(--border-color);
+    border-radius: 22px;
+    position: relative;
+    transition: 0.3s;
+}
+
+.toggle-switch .slider:before {
+    content: "";
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: 0.3s;
+}
+
+.toggle-switch input:checked + .slider {
+    background: #667eea;
+}
+
+.toggle-switch input:checked + .slider:before {
+    transform: translateX(22px);
+}
+
+.toggle-switch span:last-child {
+    font-size: 0.85rem;
+    margin-left: 12px;
 }
 
 .theme-options {
@@ -747,10 +866,10 @@ body {
 .settings-action-btn {
     width: 100%;
     margin-top: 10px;
-    padding: 8px;
+    padding: 10px;
     background: var(--accent-primary);
     border: none;
-    border-radius: 10px;
+    border-radius: 24px;
     color: white;
     cursor: pointer;
     display: flex;
@@ -758,18 +877,30 @@ body {
     justify-content: center;
     gap: 8px;
     font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.settings-action-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
 }
 
 /* Search Modal */
 .search-input {
     width: 100%;
-    padding: 10px 14px;
+    padding: 12px 16px;
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
-    border-radius: 12px;
+    border-radius: 24px;
     color: var(--text-primary);
     font-size: 0.9rem;
     margin-bottom: 16px;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #667eea;
 }
 
 .search-results {
@@ -778,10 +909,11 @@ body {
 }
 
 .search-result-item {
-    padding: 10px;
+    padding: 12px;
     border-bottom: 1px solid var(--border-color);
     cursor: pointer;
     transition: all 0.2s;
+    border-radius: 8px;
 }
 
 .search-result-item:hover {
@@ -810,7 +942,7 @@ body {
     padding: 10px 20px;
     background: var(--accent-primary);
     color: white;
-    border-radius: 10px;
+    border-radius: 24px;
     font-size: 0.8rem;
     z-index: 1100;
     opacity: 0;
@@ -859,8 +991,8 @@ body {
     }
     
     .static-logo {
-        width: 70px;
-        height: 70px;
+        width: 80px;
+        height: 80px;
     }
     
     .header-info {
@@ -870,6 +1002,6 @@ body {
     .model-selector select,
     .mode-selector select {
         font-size: 0.7rem;
-        padding: 4px 8px;
+        padding: 6px 24px 6px 10px;
     }
 }
