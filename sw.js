@@ -1,26 +1,25 @@
-const CACHE_NAME = 'moult-ai-v4';
-const VERSION = '4.0.0';
+const CACHE_NAME = 'moult-ai-v5';
+const VERSION = '5.0.0';
 const urlsToCache = [
-    './',
-    './index.html',
-    './css/style.css',
-    './js/script.js',
-    './manifest.json',
-    './images/logo.png',
-    './images/logo16.png',
-    './images/logo48.png',
-    './images/logo128.png',
-    './images/logo512.png',
-    './images/logo500-white.png',
-    './images/favicon/favicon.ico',
-    './images/favicon/favicon-16x16.png',
-    './images/favicon/favicon-32x32.png',
-    './images/favicon/apple-touch-icon.png',
-    './images/favicon/android-chrome-192x192.png',
-    './images/favicon/android-chrome-512x512.png'
+    '/',
+    '/index.html',
+    '/css/style.css',
+    '/js/script.js',
+    '/manifest.json',
+    '/images/logo.png',
+    '/images/logo16.png',
+    '/images/logo48.png',
+    '/images/logo128.png',
+    '/images/logo512.png',
+    '/images/logo500-white.png',
+    '/images/favicon/favicon.ico',
+    '/images/favicon/favicon-16x16.png',
+    '/images/favicon/favicon-32x32.png',
+    '/images/favicon/apple-touch-icon.png',
+    '/images/favicon/android-chrome-192x192.png',
+    '/images/favicon/android-chrome-512x512.png'
 ];
 
-// Install event - cache assets
 self.addEventListener('install', event => {
     console.log('[SW] Installing new version:', VERSION);
     event.waitUntil(
@@ -35,7 +34,6 @@ self.addEventListener('install', event => {
     );
 });
 
-// Activate event - clean old caches and take control
 self.addEventListener('activate', event => {
     console.log('[SW] Activating new version:', VERSION);
     event.waitUntil(
@@ -54,14 +52,11 @@ self.addEventListener('activate', event => {
     );
 });
 
-// Fetch event - network first with cache fallback (for updates)
 self.addEventListener('fetch', event => {
-    // Skip non-GET requests
     if (event.request.method !== 'GET') {
         return event.respondWith(fetch(event.request));
     }
 
-    // For HTML files - network first (to get latest version)
     if (event.request.mode === 'navigate' || event.request.destination === 'document') {
         event.respondWith(
             fetch(event.request)
@@ -74,13 +69,12 @@ self.addEventListener('fetch', event => {
                 })
                 .catch(() => {
                     return caches.match(event.request)
-                        .then(cached => cached || caches.match('./index.html'));
+                        .then(cached => cached || caches.match('/index.html'));
                 })
         );
         return;
     }
 
-    // For static assets - cache first, then network
     event.respondWith(
         caches.match(event.request)
             .then(cachedResponse => {
@@ -107,11 +101,10 @@ self.addEventListener('fetch', event => {
     );
 });
 
-// Check for updates
 self.addEventListener('message', event => {
     if (event.data && event.data.type === 'CHECK_UPDATE') {
         console.log('[SW] Checking for updates...');
-        fetch('./index.html', { cache: 'reload' })
+        fetch('/index.html', { cache: 'reload' })
             .then(response => {
                 if (response.ok) {
                     self.clients.matchAll().then(clients => {
