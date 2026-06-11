@@ -1,4 +1,4 @@
-# 🤖 Moult AI Web
+# Moult AI Web
 
 > Interface web unifiée et élégante pour interroger plusieurs modèles d'intelligence artificielle via une API proxy unique.
 
