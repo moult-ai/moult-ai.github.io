@@ -342,7 +342,26 @@
 
     <!-- Toast Container -->
     <div class="toast-container" id="toast-container"></div>
-
+	<!-- Delete All Conversations Confirmation Modal -->
+    <div class="modal" id="delete-all-modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 data-i18n="deleteAllTitle">🗑️ Supprimer toutes les conversations</h2>
+                <button class="modal-close" id="delete-all-modal-close">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p data-i18n="deleteAllConfirm">Êtes-vous sûr de vouloir supprimer TOUTES vos conversations ?</p>
+                <p class="delete-all-warning" data-i18n="deleteAllWarning">⚠️ Cette action est irréversible et supprimera définitivement tout votre historique.</p>
+                <div class="delete-all-actions">
+                    <button class="delete-all-cancel" id="delete-all-cancel" data-i18n="cancel">Annuler</button>
+                    <button class="delete-all-confirm" id="delete-all-confirm" data-i18n="confirmDelete">Oui, tout supprimer</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="js/script.js"></script>
     <script>
         if ('serviceWorker' in navigator) {
