@@ -1,6 +1,6 @@
 /**
  * Moult AI Web — Frontend Controller v3
- * Full i18n, offline detection, proper code blocks, math, responsive dropdown
+ * Full i18n, offline detection, proper code blocks, math, custom dropdowns (width: auto)
  */
 
 // ==========================================
@@ -10,7 +10,7 @@ const I18N = {
     fr: {
         newChat: 'Nouveau chat', search: 'Rechercher', import: 'Importer', history: 'Historique',
         welcomeTitle: 'Bienvenue sur Moult AI Web',
-        welcomeDesc: 'Interrogesez plusieurs modèles d\'intelligence artificielle via une interface unifiée',
+        welcomeDesc: 'Interrogez plusieurs modèles d\'intelligence artificielle via une interface unifiée',
         placeholder: 'Posez votre question...', send: 'Envoyer', settings: 'Paramètres',
         export: 'Exporter', clear: 'Effacer', copy: 'Copier', copied: 'Copié',
         noHistory: 'Aucune conversation', noResults: 'Aucun résultat pour',
@@ -320,43 +320,35 @@ let currentLang = localStorage.getItem('moult-lang') || 'fr';
 function t(key) { return (I18N[currentLang] && I18N[currentLang][key]) || I18N.fr[key] || key; }
 
 function applyTranslations() {
-    // Translate all elements with data-i18n
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if (key && t(key)) el.textContent = t(key);
     });
-    // Translate title attributes
     document.querySelectorAll('[data-i18n-title]').forEach(el => {
         const key = el.getAttribute('data-i18n-title');
         if (key && t(key)) el.setAttribute('title', t(key));
     });
-    // Placeholders
     const inp = $('message-input');
     if (inp) inp.placeholder = t('placeholder');
     const searchInp = $('search-input');
     if (searchInp) searchInp.placeholder = t('searchPlaceholder');
-    // Update lang-code with flag emoji
     const lc = $('lang-code');
     if (lc) lc.textContent = LANG_FLAGS[currentLang] || currentLang.toUpperCase();
-    // Quick action texts
     const qas = document.querySelectorAll('.quick-action span:last-child');
     const qaKeys = ['quickConcept', 'quickDebug', 'quickEmail', 'quickTranslate'];
     qas.forEach((s, i) => { if (qaKeys[i]) s.textContent = t(qaKeys[i]); });
-    // Buttons
     const installBtn = $('install-accept');
     if (installBtn) installBtn.textContent = t('installBtn');
     const installDismiss = $('install-dismiss');
     if (installDismiss) installDismiss.textContent = t('installLater');
     const installSpan = document.querySelector('.install-banner-text span');
     if (installSpan) installSpan.textContent = t('installTitle');
-    // Modals
     const settingsTitle = document.querySelector('#settings-modal .modal-header h2');
     if (settingsTitle) settingsTitle.textContent = t('paramTitle');
     const langTitle = document.querySelector('#language-modal .modal-header h2');
     if (langTitle) langTitle.textContent = t('selectLang');
     const searchTitle = document.querySelector('#search-modal .modal-header h2');
     if (searchTitle) searchTitle.textContent = '🔍 ' + t('search');
-    // History empty state
     renderHistory();
 }
 
@@ -365,7 +357,7 @@ function applyTranslations() {
 // ==========================================
 const CONFIG = {
     DEFAULT_SERVER: localStorage.getItem('moult-server-url') || 'https://api-moult-ai.lombard-web-services.com',
-    MAX_HISTORY: 50,
+    MAX_HISTORY: 5000,
     STORAGE_KEY: 'moult-conversations'
 };
 
@@ -376,6 +368,7 @@ const state = {
     models: {},
     currentProvider: 'openrouter',
     currentModel: null,
+    currentMode: 'default',
     sidebarCollapsed: localStorage.getItem('moult-sidebar-collapsed') === 'true',
     settings: {
         serverUrl: CONFIG.DEFAULT_SERVER,
@@ -387,6 +380,181 @@ const state = {
 
 const el = {};
 function $(id) { return document.getElementById(id); }
+
+// ==========================================
+// CUSTOM DROPDOWNS (width: auto / min-width: max-content)
+// ==========================================
+function createCustomDropdown(selectId, dropdownId, options, onChange, openUp = false) {
+    const trigger = document.getElementById(selectId);
+    const dropdown = document.getElementById(dropdownId);
+    const selectedText = trigger ? trigger.querySelector('.selected-text') : null;
+    
+    if (!trigger || !dropdown) return null;
+
+    let currentValue = options.length > 0 ? (options[0].value || options[0]) : null;
+    let currentOptions = options;
+
+    function renderOptions() {
+        dropdown.innerHTML = '';
+        currentOptions.forEach(opt => {
+            const div = document.createElement('div');
+            div.className = 'custom-option';
+            div.textContent = opt.label || opt;
+            div.dataset.value = opt.value || opt;
+            
+            if (div.dataset.value === currentValue) div.classList.add('selected');
+            
+            div.addEventListener('click', (e) => {
+                e.stopPropagation();
+                currentValue = div.dataset.value;
+                if (selectedText) selectedText.textContent = div.textContent;
+                
+                dropdown.classList.remove('open');
+                trigger.classList.remove('open');
+                
+                if (onChange) onChange(currentValue);
+                
+                document.querySelectorAll(`#${dropdownId} .custom-option`).forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                div.classList.add('selected');
+            });
+            dropdown.appendChild(div);
+        });
+        
+        // Adjust dropdown width to fit content
+        dropdown.style.minWidth = trigger.offsetWidth + 'px';
+    }
+
+    function positionDropdown() {
+        if (!dropdown.classList.contains('open')) return;
+        
+        const rect = trigger.getBoundingClientRect();
+        const dropdownRect = dropdown.getBoundingClientRect();
+        
+        if (openUp) {
+            const spaceAbove = rect.top;
+            const spaceBelow = window.innerHeight - rect.bottom;
+            const neededHeight = dropdownRect.height;
+            
+            if (spaceAbove > spaceBelow && spaceAbove > neededHeight + 10) {
+                dropdown.style.top = 'auto';
+                dropdown.style.bottom = '100%';
+                dropdown.style.top = '';
+            } else {
+                dropdown.style.bottom = '';
+                dropdown.style.top = 'calc(100% + 4px)';
+            }
+        }
+        
+        // Ensure dropdown doesn't go offscreen horizontally
+        const dropdownRight = rect.left + dropdownRect.width;
+        if (dropdownRight > window.innerWidth - 10) {
+            dropdown.style.left = 'auto';
+            dropdown.style.right = '0';
+        } else {
+            dropdown.style.left = '0';
+            dropdown.style.right = 'auto';
+        }
+    }
+
+    trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = dropdown.classList.contains('open');
+        
+        document.querySelectorAll('.custom-dropdown').forEach(d => d.classList.remove('open'));
+        document.querySelectorAll('.custom-select').forEach(s => s.classList.remove('open'));
+        
+        if (!isOpen) {
+            dropdown.classList.add('open');
+            trigger.classList.add('open');
+            renderOptions();
+            setTimeout(positionDropdown, 10);
+        }
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!trigger.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.remove('open');
+            trigger.classList.remove('open');
+        }
+    });
+    
+    window.addEventListener('resize', () => {
+        if (dropdown.classList.contains('open')) {
+            positionDropdown();
+        }
+    });
+
+    if (options.length > 0 && selectedText) {
+        selectedText.textContent = options[0].label || options[0];
+        if (onChange) onChange(options[0].value || options[0]);
+    }
+    renderOptions();
+    
+    return { trigger, dropdown, setOptions: (newOptions) => { currentOptions = newOptions; renderOptions(); } };
+}
+
+function initCustomDropdowns() {
+    // Model dropdown
+    const modelOptions = [];
+    Object.keys(state.models).forEach(provider => {
+        if (state.models[provider] && state.models[provider].length) {
+            state.models[provider].forEach(model => {
+                modelOptions.push({
+                    value: `${provider}:${model}`,
+                    label: `${getProviderDisplayName(provider)} - ${simplifyModelName(model)}`
+                });
+            });
+        }
+    });
+    
+    if (modelOptions.length === 0) {
+        modelOptions.push({ value: 'openrouter:nvidia/nemotron-3-nano-30b-a3b:free', label: 'OpenRouter - Nemotron' });
+    }
+    
+    createCustomDropdown('model-select', 'model-dropdown', modelOptions, (value) => {
+        const [provider, ...modelParts] = value.split(':');
+        state.currentProvider = provider;
+        state.currentModel = modelParts.join(':');
+    });
+    
+    // Mode dropdown (opens upward)
+    const modeOptions = [
+        { value: 'default', label: '🤖 Assistant' },
+        { value: 'coding', label: '💻 Code' },
+        { value: 'creative', label: '🎨 Créatif' },
+        { value: 'concise', label: '⚡ Concis' },
+        { value: 'academic', label: '📚 Académique' },
+        { value: 'debug', label: '🔍 Debug' }
+    ];
+    
+    createCustomDropdown('mode-select', 'mode-dropdown', modeOptions, (value) => {
+        state.currentMode = value;
+        const modeMap = { default: '🤖 Assistant', coding: '💻 Code', creative: '🎨 Créatif', concise: '⚡ Concis', academic: '📚 Académique', debug: '🔍 Debug' };
+        const selectedText = document.querySelector('#mode-select .selected-text');
+        if (selectedText) selectedText.textContent = modeMap[value] || value;
+    }, true);
+    
+    // Format dropdown (in modal)
+    const formatOptions = [
+        { value: 'json', label: 'JSON' },
+        { value: 'jsonl', label: 'JSONL' },
+        { value: 'md', label: 'Markdown' },
+        { value: 'alpaca', label: 'Alpaca' }
+    ];
+    
+    createCustomDropdown('format-select', 'format-dropdown', formatOptions, (value) => {
+        state.settings.exportFormat = value;
+        localStorage.setItem('moult-export-format', value);
+        showToast(t('urlUpdated'), 'success');
+    });
+}
+
+function getProviderDisplayName(provider) {
+    const names = { openrouter: 'OpenRouter', groq: 'GroqCloud', hf: 'HuggingFace' };
+    return names[provider] || provider;
+}
 
 // ==========================================
 // INIT
@@ -407,13 +575,45 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (state.sidebarCollapsed) { el.sidebar.classList.add('collapsed'); el.sidebarFab?.classList.add('visible'); }
     setTimeout(() => { $('splash-screen')?.classList.add('hidden'); }, 1500);
 
-    await initCustomDropdowns();
     await fetchModels();
+    initCustomDropdowns();
     setupEvents();
     applyTranslations();
     setupOfflineDetection();
     el.messageInput?.focus();
+    enforceHistoryTitleStyles();
 });
+
+function enforceHistoryTitleStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .history-title {
+            font-family: 'Roboto', var(--font-sans) !important;
+            font-weight: 400 !important;
+            font-size: 0.8125rem !important;
+            color: var(--text-secondary) !important;
+            background: transparent !important;
+            background-image: none !important;
+            -webkit-text-fill-color: inherit !important;
+            background-clip: unset !important;
+        }
+        .history-item.active .history-title {
+            font-weight: 500 !important;
+            color: var(--accent-primary) !important;
+        }
+        .modal .custom-dropdown {
+            z-index: 10001 !important;
+        }
+        .modal-content {
+            overflow: visible !important;
+        }
+        .modal-content .modal-body {
+            overflow-y: auto !important;
+            overflow-x: visible !important;
+        }
+    `;
+    document.head.appendChild(style);
+}
 
 function toCamelCase(s) { return s.replace(/-([a-z])/g, (_, c) => c.toUpperCase()); }
 
@@ -422,7 +622,6 @@ function toCamelCase(s) { return s.replace(/-([a-z])/g, (_, c) => c.toUpperCase(
 // ==========================================
 function setupOfflineDetection() {
     let wasOffline = !navigator.onLine;
-    // Create persistent offline bar
     const bar = document.createElement('div');
     bar.className = 'offline-bar';
     bar.style.display = 'none';
@@ -453,102 +652,82 @@ function setupOfflineDetection() {
 }
 
 // ==========================================
-// DROPDOWNS
+// MODELS
 // ==========================================
-const dropdowns = {};
-
-function createDropdown(triggerId, menuId, labelId) {
-    const trigger = $(triggerId);
-    const menu = $(menuId);
-    const label = $(labelId);
-    if (!trigger || !menu) return null;
-    const dd = { trigger, menu, label, items: [], selected: null, onSelect: null, isUp: trigger.closest('.dropdown-up') !== null };
-    trigger.addEventListener('click', (e) => {
-        e.stopPropagation();
-        Object.values(dropdowns).forEach(d => { if (d !== dd) d.menu.parentElement.classList.remove('open'); });
-        const parent = dd.menu.parentElement;
-        const wasOpen = parent.classList.contains('open');
-        parent.classList.toggle('open');
-        if (!wasOpen && dd.isUp) positionDropdownUp(dd);
-    });
-    return dd;
+async function fetchModels() {
+    try {
+        const res = await fetch(`${state.settings.serverUrl}/api/models`);
+        if (!res.ok) throw new Error('Failed');
+        const data = await res.json();
+        state.models = data.models || {};
+        updateModelDropdown();
+        updateProviderStatus(data.providers || {});
+        populateModelChips();
+    } catch (e) {
+        state.models = { openrouter: ['nvidia/nemotron-3-nano-30b-a3b:free','nvidia/nemotron-3.5-content-safety:free','nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free','nvidia/nemotron-nano-12b-v2-vl:free','nvidia/nemotron-3-ultra-550b-a55b:free','poolside/laguna-m.1:free','google/gemma-4-26b-a4b-it:free','qwen/qwen3-next-80b-a3b-instruct:free'], groq: ['llama-3.3-70b-versatile'], hf: [] };
+        updateModelDropdown();
+        populateModelChips();
+        updateProviderStatus({ openrouter: false, groq: false, hf: false });
+    }
 }
 
-function positionDropdownUp(dd) {
-    const trigger = dd.trigger;
-    const menu = dd.menu;
-    const rect = trigger.getBoundingClientRect();
-    const maxH = Math.min(320, window.innerHeight * 0.5);
-    let top = rect.top - maxH - 6;
-    let left = rect.left;
-    let width = rect.width;
-    if (top < 8) top = rect.bottom + 6;
-    if (left + width > window.innerWidth - 8) left = window.innerWidth - width - 8;
-    if (left < 8) left = 8;
-    menu.style.cssText = `position:fixed!important;top:${top}px!important;left:${left}px!important;width:${width}px!important;max-height:${maxH}px!important;z-index:9999!important;opacity:1!important;visibility:visible!important;transform:none!important;transition:none!important;display:block!important;overflow-y:auto!important;`;
-}
-
-function populateDropdown(dd, items, selectedValue, onSelect) {
-    if (!dd) return;
-    dd.items = items; dd.onSelect = onSelect; dd.menu.innerHTML = '';
-    items.forEach(item => {
-        const div = document.createElement('div');
-        div.className = `dropdown-item ${item.value === selectedValue ? 'active' : ''}`;
-        if (item.group) {
-            div.className += ' dropdown-group-label';
-            div.textContent = item.group;
-            div.style.pointerEvents = 'none';
-        } else {
-            div.innerHTML = `<span class="dropdown-item-name">${item.label}</span>`;
-            div.addEventListener('click', (e) => {
-                e.stopPropagation();
-                dd.menu.parentElement.classList.remove('open');
-                if (dd.onSelect) dd.onSelect(item.value, item);
+function updateModelDropdown() {
+    const modelOptions = [];
+    Object.keys(state.models).forEach(provider => {
+        if (state.models[provider] && state.models[provider].length) {
+            state.models[provider].forEach(model => {
+                modelOptions.push({
+                    value: `${provider}:${model}`,
+                    label: `${getProviderDisplayName(provider)} - ${simplifyModelName(model)}`
+                });
             });
         }
-        dd.menu.appendChild(div);
     });
+    
+    if (modelOptions.length === 0) {
+        modelOptions.push({ value: 'openrouter:nvidia/nemotron-3-nano-30b-a3b:free', label: 'OpenRouter - Nemotron' });
+    }
+    
+    const trigger = document.getElementById('model-select');
+    const dropdown = document.getElementById('model-dropdown');
+    if (trigger && dropdown) {
+        const selectedText = trigger.querySelector('.selected-text');
+        if (selectedText && modelOptions[0]) {
+            selectedText.textContent = modelOptions[0].label;
+            const [provider, ...modelParts] = modelOptions[0].value.split(':');
+            state.currentProvider = provider;
+            state.currentModel = modelParts.join(':');
+        }
+        dropdown.innerHTML = '';
+        modelOptions.forEach(opt => {
+            const div = document.createElement('div');
+            div.className = 'custom-option';
+            div.textContent = opt.label;
+            div.dataset.value = opt.value;
+            div.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const [provider, ...modelParts] = opt.value.split(':');
+                state.currentProvider = provider;
+                state.currentModel = modelParts.join(':');
+                if (selectedText) selectedText.textContent = opt.label;
+                dropdown.classList.remove('open');
+                trigger.classList.remove('open');
+                document.querySelectorAll('#model-dropdown .custom-option').forEach(o => o.classList.remove('selected'));
+                div.classList.add('selected');
+            });
+            dropdown.appendChild(div);
+        });
+        dropdown.style.minWidth = trigger.offsetWidth + 'px';
+    }
 }
 
-function initCustomDropdowns() {
-    const modelDD = createDropdown('model-dropdown-trigger', 'model-dropdown-menu', 'model-dropdown-label');
-    if (modelDD) dropdowns.model = modelDD;
-
-    const modeDD = createDropdown('mode-dropdown-trigger', 'mode-dropdown-menu', 'mode-dropdown-label');
-    if (modeDD) {
-        dropdowns.mode = modeDD;
-        const modes = [
-            { value: 'default', label: '🤖 Assistant' }, { value: 'coding', label: '💻 Code' },
-            { value: 'creative', label: '🎨 Créatif' }, { value: 'concise', label: '⚡ Concis' },
-            { value: 'academic', label: '📚 Académique' }, { value: 'debug', label: '🔍 Debug' }
-        ];
-        populateDropdown(modeDD, modes, 'default', (val) => {
-            modeDD.label.textContent = modes.find(m => m.value === val)?.label || val;
-        });
-    }
-
-    const formatDD = createDropdown('format-dropdown-trigger', 'format-dropdown-menu', 'format-dropdown-label');
-    if (formatDD) {
-        dropdowns.format = formatDD;
-        const formats = [{ value: 'json', label: 'JSON' }, { value: 'jsonl', label: 'JSONL' }, { value: 'md', label: 'Markdown' }, { value: 'alpaca', label: 'Alpaca' }];
-        populateDropdown(formatDD, formats, state.settings.exportFormat, (val) => {
-            state.settings.exportFormat = val; localStorage.setItem('moult-export-format', val);
-            formatDD.label.textContent = formats.find(f => f.value === val)?.label || val;
-        });
-        formatDD.label.textContent = formats.find(f => f.value === state.settings.exportFormat)?.label || 'JSON';
-    }
-
-    document.addEventListener('click', () => {
-        Object.values(dropdowns).forEach(d => {
-            if (d?.menu?.parentElement) d.menu.parentElement.classList.remove('open');
-            if (d?.menu) d.menu.style.cssText = '';
-        });
-    });
+function populateModelChips() { 
+    if (!el.modelChips) return; 
+    const all = []; 
+    Object.values(state.models).forEach(m => { if (m) m.slice(0, 3).forEach(x => all.push(x)); }); 
+    el.modelChips.innerHTML = all.slice(0, 8).map(m => `<span class="chip">${simplifyModelName(m)}</span>`).join(''); 
 }
 
-// ==========================================
-// MODEL NAME
-// ==========================================
 function simplifyModelName(model) {
     if (!model) return 'Unknown';
     const m = model.split('/').pop().replace(/:free$/, '');
@@ -564,11 +743,28 @@ function simplifyModelName(model) {
     return m.length > 30 ? m.substring(0, 27) + '...' : m;
 }
 
+function updateProviderStatus(providers) { 
+    const c = el.providerStatus; 
+    if (!c) return; 
+    ['openrouter', 'groq', 'hf'].forEach(name => { 
+        const item = c.querySelector(`.status-item[data-provider="${name}"]`); 
+        if (item) { 
+            item.classList.remove('online', 'offline'); 
+            item.classList.add(providers[name] ? 'online' : 'offline'); 
+        } 
+    }); 
+}
+
 // ==========================================
 // EVENTS
 // ==========================================
 function setupEvents() {
-    el.menuToggle?.addEventListener('click', () => { el.sidebar.classList.add('open'); el.sidebarOverlay.classList.add('active'); });
+    el.menuToggle?.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        el.sidebar.classList.add('open');
+        el.sidebarOverlay.classList.add('active');
+    });
     el.sidebarClose?.addEventListener('click', closeSidebar);
     el.sidebarOverlay?.addEventListener('click', closeSidebar);
     el.sidebarCollapseBtn?.addEventListener('click', toggleSidebarCollapse);
@@ -590,8 +786,10 @@ function setupEvents() {
     el.settingsModal?.querySelector('.modal-overlay')?.addEventListener('click', closeSettings);
 
     el.serverUrlInput?.addEventListener('change', (e) => {
-        state.settings.serverUrl = e.target.value; localStorage.setItem('moult-server-url', e.target.value);
-        fetchModels(); showToast(t('urlUpdated'), 'success');
+        state.settings.serverUrl = e.target.value; 
+        localStorage.setItem('moult-server-url', e.target.value);
+        fetchModels(); 
+        showToast(t('urlUpdated'), 'success');
     });
 
     document.querySelectorAll('.theme-option').forEach(btn => {
@@ -605,8 +803,10 @@ function setupEvents() {
     const fontSizeInput = $('font-size');
     if (fontSizeInput) {
         fontSizeInput.addEventListener('input', (e) => {
-            const size = parseInt(e.target.value); state.settings.fontSize = size;
-            localStorage.setItem('moult-font-size', size); applyFontSize(size);
+            const size = parseInt(e.target.value); 
+            state.settings.fontSize = size;
+            localStorage.setItem('moult-font-size', size); 
+            applyFontSize(size);
             document.querySelector('.range-value').textContent = `${size}px`;
         });
         fontSizeInput.value = state.settings.fontSize;
@@ -617,7 +817,11 @@ function setupEvents() {
     el.clearChatBtn?.addEventListener('click', clearCurrentChat);
 
     document.querySelectorAll('.quick-action').forEach(btn => {
-        btn.addEventListener('click', () => { el.messageInput.value = btn.dataset.prompt; handleInput(); el.messageInput.focus(); });
+        btn.addEventListener('click', () => { 
+            el.messageInput.value = btn.dataset.prompt; 
+            handleInput(); 
+            el.messageInput.focus(); 
+        });
     });
 
     document.querySelector('.main')?.addEventListener('click', (e) => {
@@ -626,13 +830,13 @@ function setupEvents() {
 
     document.getElementById('theme-toggle')?.addEventListener('click', () => {
         const themes = ['dark', 'light', 'ocean', 'forest', 'sunset', 'midnight'];
-        const idx = themes.indexOf(state.settings.theme); const next = themes[(idx + 1) % themes.length];
+        const idx = themes.indexOf(state.settings.theme); 
+        const next = themes[(idx + 1) % themes.length];
         applyTheme(next);
         document.querySelectorAll('.theme-option').forEach(b => b.classList.toggle('active', b.dataset.theme === next));
         showToast(`${t('themeChanged')} ${next}`, 'success');
     });
 
-    // Language — planet button opens modal
     $('lang-toggle')?.addEventListener('click', () => $('language-modal')?.classList.add('active'));
     $('lang-modal-close')?.addEventListener('click', () => $('language-modal')?.classList.remove('active'));
     $('language-modal')?.querySelector('.modal-overlay')?.addEventListener('click', () => $('language-modal')?.classList.remove('active'));
@@ -651,7 +855,6 @@ function setupEvents() {
         });
     });
 
-    // Apply saved language on load
     const savedLang = localStorage.getItem('moult-lang') || 'fr';
     currentLang = savedLang;
     document.documentElement.setAttribute('dir', RTL_LANGS.includes(savedLang) ? 'rtl' : 'ltr');
@@ -729,42 +932,6 @@ function downloadBlob(blob, filename) { const url = URL.createObjectURL(blob); c
 function loadJSZip() { return new Promise((r, j) => { const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js'; s.onload = r; s.onerror = j; document.head.appendChild(s); }); }
 
 // ==========================================
-// MODELS
-// ==========================================
-async function fetchModels() {
-    try {
-        const res = await fetch(`${state.settings.serverUrl}/api/models`);
-        if (!res.ok) throw new Error('Failed');
-        const data = await res.json();
-        state.models = data.models || {};
-        populateModelDropdown(); updateProviderStatus(data.providers || {}); populateModelChips();
-    } catch (e) {
-        state.models = { openrouter: ['nvidia/nemotron-3-nano-30b-a3b:free','nvidia/nemotron-3.5-content-safety:free','nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free','nvidia/nemotron-nano-12b-v2-vl:free','nvidia/nemotron-3-ultra-550b-a55b:free','poolside/laguna-m.1:free','google/gemma-4-26b-a4b-it:free','qwen/qwen3-next-80b-a3b-instruct:free'], groq: ['llama-3.3-70b-versatile'], hf: [] };
-        populateModelDropdown(); populateModelChips(); updateProviderStatus({ openrouter: false, groq: false, hf: false });
-    }
-}
-
-function populateModelDropdown() {
-    const dd = dropdowns.model; if (!dd) return;
-    const items = []; const pn = { openrouter: 'OpenRouter', groq: 'GroqCloud', hf: 'HuggingFace' };
-    Object.entries(state.models).forEach(([provider, models]) => {
-        if (!models || !models.length) return;
-        items.push({ group: pn[provider] || provider });
-        models.forEach(m => items.push({ value: `${provider}:${m}`, label: simplifyModelName(m) }));
-    });
-    populateDropdown(dd, items, null, (val, item) => {
-        const [provider, ...parts] = val.split(':'); state.currentProvider = provider; state.currentModel = parts.join(':');
-        dd.label.textContent = item.label;
-    });
-    const first = items.find(i => !i.group);
-    if (first) { dd.label.textContent = first.label; const [p, ...pa] = first.value.split(':'); state.currentProvider = p; state.currentModel = pa.join(':'); }
-}
-
-function populateModelChips() { if (!el.modelChips) return; const all = []; Object.values(state.models).forEach(m => { if (m) m.slice(0, 3).forEach(x => all.push(x)); }); el.modelChips.innerHTML = all.slice(0, 8).map(m => `<span class="chip">${simplifyModelName(m)}</span>`).join(''); }
-function providerName(p) { return { openrouter: 'OpenRouter', groq: 'GroqCloud', hf: 'HuggingFace' }[p] || p; }
-function updateProviderStatus(providers) { const c = el.providerStatus; if (!c) return; ['openrouter', 'groq', 'hf'].forEach(name => { const item = c.querySelector(`.status-item[data-provider="${name}"]`); if (item) { item.classList.remove('online', 'offline'); item.classList.add(providers[name] ? 'online' : 'offline'); } }); }
-
-// ==========================================
 // CONVERSATIONS
 // ==========================================
 function loadConversations() { try { state.conversations = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEY)) || []; } catch { state.conversations = []; } renderHistory(); }
@@ -789,19 +956,56 @@ function renderHistory() {
         item.className = `history-item ${conv.id === state.currentConversationId ? 'active' : ''}`;
         item.innerHTML = `<span class="history-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><span class="history-title">${escapeHtml(conv.title)}</span><div class="history-actions"><button class="history-action-btn edit-btn" title="${t('rename')}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg></button><button class="history-action-btn delete-btn" title="${t('delete')}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>`;
         item.addEventListener('click', (e) => { if (!e.target.closest('.history-actions')) loadConversation(conv.id); });
-        item.querySelector('.edit-btn').addEventListener('click', (e) => { e.stopPropagation(); editTitle(item.querySelector('.history-title'), conv); });
-        item.querySelector('.delete-btn').addEventListener('click', (e) => deleteConversation(conv.id, e));
+        const editBtn = item.querySelector('.edit-btn');
+        if (editBtn) {
+            editBtn.addEventListener('click', (e) => { e.stopPropagation(); editTitle(item.querySelector('.history-title'), conv); });
+        }
+        const deleteBtn = item.querySelector('.delete-btn');
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', (e) => deleteConversation(conv.id, e));
+        }
         c.appendChild(item);
     });
 }
 
 function editTitle(titleSpan, conversation) {
-    titleSpan.contentEditable = true; titleSpan.focus();
-    const range = document.createRange(); range.selectNodeContents(titleSpan); const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+    titleSpan.contentEditable = true; 
+    titleSpan.focus();
+    titleSpan.style.fontFamily = "'Roboto', var(--font-sans)";
+    titleSpan.style.fontWeight = "400";
+    titleSpan.style.fontSize = "0.8125rem";
+    titleSpan.style.color = "var(--text-secondary)";
+    titleSpan.style.background = "var(--bg-tertiary)";
+    const range = document.createRange(); 
+    range.selectNodeContents(titleSpan); 
+    const sel = window.getSelection(); 
+    sel.removeAllRanges(); 
+    sel.addRange(range);
     const original = conversation.title;
-    const finish = () => { titleSpan.contentEditable = false; const t2 = titleSpan.textContent.trim(); if (t2 && t2 !== original) { conversation.title = t2; saveConversations(); showToast(t('titleModified'), 'success'); } else titleSpan.textContent = original; };
+    const finish = () => { 
+        titleSpan.contentEditable = false; 
+        const t2 = titleSpan.textContent.trim(); 
+        if (t2 && t2 !== original) { 
+            conversation.title = t2; 
+            saveConversations(); 
+            showToast(t('titleModified'), 'success'); 
+        } else { 
+            titleSpan.textContent = original; 
+        }
+        titleSpan.style.cssText = '';
+        titleSpan.className = 'history-title';
+    };
     titleSpan.addEventListener('blur', finish, { once: true });
-    titleSpan.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); titleSpan.blur(); } if (e.key === 'Escape') { titleSpan.textContent = original; titleSpan.blur(); } });
+    titleSpan.addEventListener('keydown', (e) => { 
+        if (e.key === 'Enter') { 
+            e.preventDefault(); 
+            titleSpan.blur(); 
+        } 
+        if (e.key === 'Escape') { 
+            titleSpan.textContent = original; 
+            titleSpan.blur(); 
+        } 
+    });
 }
 
 // ==========================================
@@ -847,7 +1051,6 @@ document.addEventListener('click', (e) => {
         btn.classList.add('copied');
         setTimeout(() => { btn.textContent = t('copyCode'); btn.classList.remove('copied'); }, 2000);
     }).catch(() => {
-        // Fallback: select text
         const range = document.createRange();
         range.selectNodeContents(code);
         const sel = window.getSelection();
@@ -920,7 +1123,7 @@ function formatMarkdown(text) {
     const inlineCodes = [];
     html = html.replace(/`([^`]+)`/g, (m, code) => { const i = inlineCodes.length; inlineCodes.push(`<code>${code}</code>`); return `%%IC_${i}%%`; });
 
-    // 3) LaTeX / Math — $...$ and $$...$$
+    // 3) LaTeX / Math
     const mathBlocks = [];
     html = html.replace(/\$\$([\s\S]+?)\$\$/g, (m, tex) => { const i = mathBlocks.length; mathBlocks.push(`<div class="math-block" data-tex="${escapeHtml(tex)}">$${tex}$</div>`); return `%%MATH_${i}%%`; });
     html = html.replace(/\$([^\$\n]+?)\$/g, (m, tex) => { const i = mathBlocks.length; mathBlocks.push(`<span class="math-inline" data-tex="${escapeHtml(tex)}">$${tex}$</span>`); return `%%MATH_${i}%%`; });
@@ -959,18 +1162,17 @@ function formatMarkdown(text) {
     html = html.replace(/^\|(.+)\|$/gm, (m, content) => {
         const cells = content.split('|').map(c => c.trim());
         if (cells.every(c => /^[-:]+$/.test(c))) return '%%TSEP%%';
-        const isHeader = cells.some(c => c.length > 0) && !m.includes('%%');
         return '<tr>' + cells.map(c => `<td>${c}</td>`).join('') + '</tr>';
     });
     html = html.replace(/((?:<tr>[\s\S]*?<\/tr>\n?%%TSEP%%?\n?)+)/g, (m) => {
         const cleaned = m.replace(/%%TSEP%%\n?/g, '');
-        const firstRowMatch = cleaned.match(/<tr>([\s\S]*?)<\/tr>/);
+        const firstRowMatch = cleaned.match(/<td>([\s\S]*?)<\/tr>/);
         if (firstRowMatch) {
             const thead = '<thead>' + firstRowMatch[0] + '</thead>';
             const tbody = '<tbody>' + cleaned.replace(firstRowMatch[0], '') + '</tbody>';
             return '<table>' + thead + tbody + '</table>';
         }
-        return '<table>' + cleaned + '</table>';
+        return '</table>' + cleaned + '</table>';
     });
 
     // 12) Links and images
@@ -1009,11 +1211,11 @@ async function sendMessage() {
     el.messageInput.value = ''; el.messageInput.style.height = 'auto'; handleInput(); scrollToBottom();
     state.isLoading = true; el.sendBtn.disabled = true;
     const typingId = showTypingIndicator();
-    const mode = dropdowns.mode?.label?.textContent?.trim() || 'default';
     const modeMap = { '🤖 Assistant': 'default', '💻 Code': 'coding', '🎨 Créatif': 'creative', '⚡ Concis': 'concise', '📚 Académique': 'academic', '🔍 Debug': 'debug' };
+    const mode = modeMap[state.currentMode] || state.currentMode || 'default';
     const history = (conv.messages || []).slice(-20).filter(m => m.role === 'user' || m.role === 'assistant').map(m => ({ role: m.role, content: m.content }));
     try {
-        const res = await fetch(`${state.settings.serverUrl}/api/chat`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message, provider: state.currentProvider, model: state.currentModel, mode: modeMap[mode] || 'default', reasoning: false, stream: true, history }) });
+        const res = await fetch(`${state.settings.serverUrl}/api/chat`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message, provider: state.currentProvider, model: state.currentModel, mode, reasoning: false, stream: true, history }) });
         removeTypingIndicator(typingId);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         await handleStreamResponse(res);
