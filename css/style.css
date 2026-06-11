@@ -474,3 +474,68 @@ body{font-family:var(--font-sans);background:var(--bg-primary);color:var(--text-
 ::selection{background:rgba(99,102,241,.3);color:var(--text-primary)}
 :focus-visible{outline:2px solid var(--accent-primary);outline-offset:2px}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+
+/* ===== DELETE ALL CONFIRMATION MODAL ===== */
+#delete-all-modal .modal-content {
+    max-width: 420px;
+}
+
+#delete-all-modal .modal-body {
+    text-align: center;
+}
+
+#delete-all-modal p {
+    margin-bottom: var(--space-md);
+    color: var(--text-secondary);
+}
+
+#delete-all-modal .delete-all-warning {
+    color: var(--warning);
+    font-size: 0.875rem;
+    background: rgba(245, 158, 11, 0.1);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-md);
+    margin: var(--space-md) 0;
+}
+
+.delete-all-actions {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    margin-top: var(--space-lg);
+}
+
+.delete-all-cancel {
+    padding: var(--space-sm) var(--space-lg);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.delete-all-cancel:hover {
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+}
+
+.delete-all-confirm {
+    padding: var(--space-sm) var(--space-lg);
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    border: none;
+    border-radius: var(--radius-md);
+    color: white;
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.delete-all-confirm:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+}
