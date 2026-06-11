@@ -1,244 +1,369 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Moult AI Web - Assistant Intelligent</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Moult AI Web — Assistant Multi-Modèles</title>
+    <meta name="description" content="Moult AI Web — Interface unifiée pour interroger plusieurs modèles d'IA via OpenRouter, Groq et HuggingFace">
+    <meta name="theme-color" content="#0a0e17">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Moult AI Web">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="keywords" content="Moult AI, chatbot, IA, intelligence artificielle, OpenRouter, Groq, HuggingFace, LLM, assistant IA, multi-modèles, chat IA, GPT, Llama, Mistral, DeepSeek">
+    <meta name="author" content="Lombard Web Services">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta name="language" content="fr">
+    <link rel="canonical" href="https://moult-ai.lombard-web-services.com/new/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://moult-ai.lombard-web-services.com/new/">
+    <meta property="og:title" content="Moult AI Web — Assistant Multi-Modèles d'Intelligence Artificielle">
+    <meta property="og:description" content="Interface unifiée et élégante pour interroger plusieurs modèles d'IA (Llama, Mistral, Qwen, DeepSeek, Gemma...) via OpenRouter, Groq et HuggingFace. Chat intelligent avec streaming, historique local, thèmes et PWA.">
+    <meta property="og:image" content="https://moult-ai.lombard-web-services.com/new/images/logo512.png">
+    <meta property="og:image:width" content="512">
+    <meta property="og:image:height" content="512">
+    <meta property="og:image:alt" content="Moult AI Web — Logo">
+    <meta property="og:site_name" content="Moult AI Web">
+    <meta property="og:locale" content="fr_FR">
+    <meta property="og:locale:alternate" content="en_US">
+    <meta property="og:locale:alternate" content="ar_SA">
+    <meta property="og:locale:alternate" content="zh_CN">
+    <meta property="og:locale:alternate" content="hi_IN">
+    <meta property="og:locale:alternate" content="el_GR">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@LombardWebServices">
+    <meta name="twitter:url" content="https://moult-ai.lombard-web-services.com/new/">
+    <meta name="twitter:title" content="Moult AI Web — Assistant Multi-Modèles d'IA">
+    <meta name="twitter:description" content="Interface unifiée pour interroger plusieurs modèles d'IA via OpenRouter, Groq et HuggingFace. Chat intelligent, streaming, thèmes.">
+    <meta name="twitter:image" content="https://moult-ai.lombard-web-services.com/new/images/logo512.png">
+    <meta name="twitter:image:alt" content="Moult AI Web">
+    <meta name="twitter:creator" content="@LombardWebServices">
+
+    <!-- Additional SEO -->
+    <meta name="application-name" content="Moult AI Web">
+    <meta name="msapplication-TileColor" content="#0a0e17">
+    <meta name="msapplication-TileImage" content="images/logo128.png">
+
     <!-- Favicons -->
     <link rel="apple-touch-icon" sizes="180x180" href="images/favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="images/favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon/favicon-16x16.png">
-    <link rel="manifest" href="images/favicon/site.webmanifest">
+    <link rel="manifest" href="manifest.json">
     <link rel="shortcut icon" href="images/favicon/favicon.ico">
-    
-    <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <!-- JSZip pour export ZIP -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    
-    <!-- Custom CSS -->
+
+    <!-- Fonts: Roboto + Inter + JetBrains Mono + Noto Sans Arabic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Roboto:wght@300;400;500;700&family=Noto+Sans:wght@400;500;700&family=Noto+Sans+Arabic:wght@400;500;700&family=Noto+Sans+Tifinagh:wght@400;700&family=Noto+Sans+Devanagari:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- KaTeX for math formulas -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
+    <!-- Structured Data JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Moult AI Web",
+        "url": "https://moult-ai.lombard-web-services.com/new/",
+        "description": "Interface unifiée et élégante pour interroger plusieurs modèles d'intelligence artificielle via OpenRouter, Groq et HuggingFace",
+        "applicationCategory": "CommunicationApplication",
+        "operatingSystem": "Web (PWA)",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+        "author": { "@type": "Organization", "name": "Lombard Web Services", "url": "https://lombard-web-services.com" },
+        "inLanguage": ["fr", "en", "es", "de", "it", "pt", "ja", "zh", "ar", "hi", "el"],
+        "featureList": "Chat IA multi-modèles, Streaming en temps réel, 6 thèmes, PWA, Import/Export, Historique local",
+        "screenshot": "https://moult-ai.lombard-web-services.com/new/images/logo512.png",
+        "softwareVersion": "1.0",
+        "dateModified": "2025-01-01"
+    }
+    </script>
+
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="app-container">
+    <!-- Splash Screen (PWA) -->
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-logo">
+            <img src="images/logo128.png" alt="Moult AI Web" class="splash-logo-img">
+        </div>
+        <div class="splash-text">Moult AI Web</div>
+        <div class="splash-bar"><div class="splash-progress"></div></div>
+    </div>
+
+    <!-- App Container -->
+    <div class="app" id="app">
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
-            <button class="sidebar-toggle" id="sidebarToggle">
-                <i class="fas fa-chevron-right"></i>
-            </button>
-            
             <div class="sidebar-header">
-                <div class="logo-area">
-                    <div class="logo-icon">
-                        <img src="images/logo48.png" alt="Moult AI Web" class="logo-img">
-                    </div>
-                    <h2>Moult AI Web</h2>
+                <div class="logo">
+                    <img src="images/logo48.png" alt="Moult AI Web" class="logo-img">
+                    <span class="logo-text">Moult AI Web</span>
                 </div>
-                <button class="new-chat-btn" id="newChatBtn">
-                    <i class="fas fa-plus"></i>
-                    <span>Nouvelle conversation</span>
-                </button>
-                <button class="import-chat-btn" id="importChatBtn">
-                    <i class="fas fa-upload"></i>
-                    <span>Importer</span>
-                </button>
-                <button class="search-btn" id="searchBtn">
-                    <i class="fas fa-search"></i>
-                    <span>Rechercher</span>
-                </button>
-                <button class="settings-btn" id="settingsBtn">
-                    <i class="fas fa-cog"></i>
-                    <span>Paramètres</span>
+                <button class="sidebar-close" id="sidebar-close" aria-label="Fermer le menu">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
                 </button>
             </div>
 
-            <div class="conversations-list" id="conversationsList"></div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <button class="nav-btn primary" id="new-chat-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v16m8-8H4"/></svg>
+                        <span data-i18n="newChat">Nouveau chat</span>
+                    </button>
+                    <button class="nav-btn" id="search-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                        <span data-i18n="search">Rechercher</span>
+                    </button>
+                    <button class="nav-btn" id="import-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        <span data-i18n="import">Importer</span>
+                    </button>
+                </div>
+                <div class="nav-section">
+                    <span class="nav-label" data-i18n="history">Historique</span>
+                    <div class="chat-history" id="chat-history"></div>
+                </div>
+            </nav>
 
             <div class="sidebar-footer">
-                <button class="theme-toggle" id="themeToggle">
-                    <i class="fas fa-moon"></i>
-                </button>
-                <button class="lang-toggle" id="langToggle">
-                    <i class="fas fa-globe"></i>
-                    <span>FR</span>
-                </button>
+                <div class="provider-status" id="provider-status">
+                    <div class="status-item" data-provider="openrouter"><span class="status-dot"></span><span class="status-name">OpenRouter</span></div>
+                    <div class="status-item" data-provider="groq"><span class="status-dot"></span><span class="status-name">Groq</span></div>
+                    <div class="status-item" data-provider="hf"><span class="status-dot"></span><span class="status-name">HuggingFace</span></div>
+                </div>
+                <div class="sidebar-footer-actions">
+                    <button class="lang-toggle" id="lang-toggle" aria-label="Changer de langue">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        <span class="lang-code" id="lang-code">FR</span>
+                    </button>
+                    <button class="theme-toggle" id="theme-toggle" aria-label="Changer de thème">
+                        <svg class="moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                        <svg class="sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                    </button>
+                    <button class="sidebar-collapse-btn" id="sidebar-collapse-btn" aria-label="Réduire la barre latérale">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="11 17 6 12 11 7"/><polyline points="18 17 13 12 18 7"/></svg>
+                    </button>
+                </div>
+                <div class="copyright">© Lombard Web Services</div>
             </div>
         </aside>
 
-        <!-- Main Chat Area -->
-        <main class="main-content">
-            <header class="chat-header">
-                <button class="mobile-menu-btn" id="mobileMenuBtn">
-                    <i class="fas fa-bars"></i>
+        <!-- Sidebar Overlay (mobile) -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+        <!-- Floating sidebar toggle (visible when collapsed) -->
+        <button class="sidebar-fab" id="sidebar-fab" aria-label="Ouvrir le menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M3 12h18M3 6h18M3 18h18"/>
+            </svg>
+        </button>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Header -->
+            <header class="main-header">
+                <button class="menu-toggle" id="menu-toggle" aria-label="Ouvrir le menu">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
                 </button>
-                <div class="header-info">
-                    <div class="provider-badge" id="providerBadge">
-                        <i class="fas fa-microchip"></i>
-                        <span>OpenRouter</span>
-                    </div>
-                    <div class="model-selector">
-                        <select id="modelSelect">
-                            <option value="openrouter">OpenRouter</option>
-                            <option value="groq">GroqCloud</option>
-                            <option value="hf">HuggingFace</option>
-                        </select>
-                    </div>
-                    <div class="mode-selector">
-                        <select id="modeSelect">
-                            <option value="default">🤖 Général</option>
-                            <option value="coding">💻 Code</option>
-                            <option value="creative">🎨 Créatif</option>
-                            <option value="concise">⚡ Concis</option>
-                        </select>
+                <div class="header-model-selector">
+                    <div class="dropdown" id="model-dropdown">
+                        <button class="dropdown-trigger" id="model-dropdown-trigger">
+                            <span class="dropdown-label" id="model-dropdown-label">Assistant</span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                        </button>
+                        <div class="dropdown-menu" id="model-dropdown-menu"></div>
                     </div>
                 </div>
                 <div class="header-actions">
-                    <button class="clear-chat-btn" id="clearChatBtn">
-                        <i class="fas fa-trash-alt"></i>
+                    <button class="icon-btn" id="export-btn" data-i18n-title="export">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4m4-5l5 5 5-5m-5 5V3"/></svg>
+                    </button>
+                    <button class="icon-btn" id="settings-btn" data-i18n-title="settings">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    </button>
+                    <button class="icon-btn" id="clear-chat-btn" data-i18n-title="clear">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                     </button>
                 </div>
             </header>
 
-            <!-- Welcome Screen -->
-            <div class="welcome-screen" id="welcomeScreen">
-                <div class="welcome-content">
-                    <div class="static-logo">
-                        <div class="logo-icon-center">
-                            <img src="images/logo128.png" alt="Moult AI Web">
+            <!-- Chat Area -->
+            <div class="chat-container" id="chat-container">
+                <div class="welcome-screen" id="welcome-screen">
+                    <div class="welcome-content">
+                        <div class="welcome-logo">
+                            <img src="images/logo128.png" alt="Moult AI Web" class="welcome-logo-img">
+                        </div>
+                        <h1 data-i18n="welcomeTitle">Bienvenue sur Moult AI Web</h1>
+                        <p data-i18n="welcomeDesc">Interrogez plusieurs modèles d'intelligence artificielle via une interface unifiée</p>
+                        <div class="quick-actions">
+                            <button class="quick-action" data-prompt="Explique-moi le concept de transformer en deep learning"><span class="quick-icon">🧠</span><span>Expliquer un concept</span></button>
+                            <button class="quick-action" data-prompt="Résous ce bug : mon API Node.js renvoie une erreur CORS"><span class="quick-icon">🐛</span><span>Aider au debugging</span></button>
+                            <button class="quick-action" data-prompt="Rédige un email professionnel pour demander une extension de délai"><span class="quick-icon">✉️</span><span>Rédiger un email</span></button>
+                            <button class="quick-action" data-prompt="Traduis ce texte en anglais professionnel : Bonjour, je vous contacte concernant..."><span class="quick-icon">🌍</span><span>Traduire</span></button>
+                        </div>
+                        <div class="model-showcase">
+                            <div class="showcase-title" data-i18n="availableModels">Modèles disponibles</div>
+                            <div class="model-chips" id="model-chips"></div>
                         </div>
                     </div>
-                    <h1>Moult AI Web</h1>
-                    <p class="welcome-subtitle" id="welcomeText">Comment puis-je vous aider aujourd'hui ?</p>
                 </div>
+                <div class="messages-area" id="messages-area"></div>
             </div>
-
-            <!-- Chat Messages -->
-            <div class="chat-messages" id="chatMessages" style="display: none;"></div>
 
             <!-- Input Area -->
             <div class="input-area">
-                <div class="input-container">
-                    <textarea id="userInput" rows="1" placeholder="Tapez votre message..."></textarea>
-                    <button id="sendBtn" class="send-btn">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
-                <div class="input-footer">
-                    <div class="typing-indicator" id="typingIndicator" style="display: none;">
-                        <span></span><span></span><span></span>
+                <div class="input-wrapper">
+                    <div class="input-box">
+                        <textarea id="message-input" placeholder="Posez votre question..." rows="1" maxlength="4000"></textarea>
+                        <button class="send-btn" id="send-btn" disabled>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                        </button>
+                    </div>
+                    <div class="input-footer">
+                        <div class="mode-select-wrapper">
+                            <div class="dropdown dropdown-sm dropdown-up" id="mode-dropdown">
+                                <button class="dropdown-trigger" id="mode-dropdown-trigger">
+                                    <span class="dropdown-label" id="mode-dropdown-label">🤖 Assistant</span>
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                                </button>
+                                <div class="dropdown-menu" id="mode-dropdown-menu"></div>
+                            </div>
+                        </div>
+                        <span class="shortcut-hint">Entrée pour envoyer · Maj+Entrée pour nouvelle ligne</span>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Language Modal -->
-    <div id="languageModal" class="modal">
-        <div class="modal-content glass">
-            <div class="modal-header">
-                <h3><i class="fas fa-language"></i> Choisir la langue</h3>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <button class="lang-option" data-lang="fr">🇫🇷 Français</button>
-                <button class="lang-option" data-lang="en">🇬🇧 English</button>
-                <button class="lang-option" data-lang="es">🇪🇸 Español</button>
-                <button class="lang-option" data-lang="de">🇩🇪 Deutsch</button>
-                <button class="lang-option" data-lang="it">🇮🇹 Italiano</button>
-                <button class="lang-option" data-lang="pt">🇵🇹 Português</button>
-                <button class="lang-option" data-lang="ja">🇯🇵 日本語</button>
-                <button class="lang-option" data-lang="zh">🇨🇳 中文</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Settings Modal -->
-    <div id="settingsModal" class="modal">
-        <div class="modal-content glass">
+    <div class="modal" id="settings-modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
             <div class="modal-header">
-                <h3><i class="fas fa-cog"></i> Paramètres</h3>
-                <button class="modal-close">&times;</button>
+                <h2 data-i18n="paramTitle">⚙️ Paramètres</h2>
+                <button class="modal-close" id="modal-close"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
             </div>
             <div class="modal-body">
-                <div class="settings-section">
-                    <h4>🎨 Thèmes</h4>
-                    <div class="theme-options">
+                <div class="setting-group">
+                    <label data-i18n="proxyUrl">URL du serveur proxy</label>
+                    <input type="url" id="server-url" value="https://api-moult-ai.lombard-web-services.com">
+                </div>
+                <div class="setting-group">
+                    <label data-i18n="themeLabel">🎨 Thème</label>
+                    <div class="theme-options theme-grid">
                         <button class="theme-option" data-theme="light">☀️ Clair</button>
-                        <button class="theme-option" data-theme="dark">🌙 Sombre</button>
+                        <button class="theme-option active" data-theme="dark">🌙 Sombre</button>
                         <button class="theme-option" data-theme="ocean">🌊 Océan</button>
                         <button class="theme-option" data-theme="forest">🌲 Forêt</button>
                         <button class="theme-option" data-theme="sunset">🌅 Coucher de soleil</button>
                         <button class="theme-option" data-theme="midnight">🌌 Minuit</button>
+                        <button class="theme-option" data-theme="system">💻 Système</button>
                     </div>
                 </div>
-                <div class="settings-section">
-                    <h4>⚙️ Options</h4>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="streamingToggle">
-                        <span class="slider"></span>
-                        <span>Mode streaming (réponse en temps réel)</span>
-                    </label>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="reasoningToggle">
-                        <span class="slider"></span>
-                        <span>Activer le raisonnement (NVIDIA Nemotron)</span>
-                    </label>
+                <div class="setting-group">
+                    <label data-i18n="fontSize">Taille de police</label>
+                    <input type="range" id="font-size" min="12" max="20" value="14">
+                    <span class="range-value">14px</span>
                 </div>
-                <div class="settings-section">
-                    <h4>📦 Import/Export</h4>
-                    <label>Format d'import/export :</label>
-                    <select id="importFormat">
-                        <option value="json">JSON</option>
-                        <option value="jsonl">JSONL</option>
-                        <option value="md">Markdown</option>
-                        <option value="alpaca">Alpaca</option>
-                    </select>
-                    <button id="exportAllBtn" class="settings-action-btn">
-                        <i class="fas fa-download"></i> Exporter toutes les conversations (ZIP)
-                    </button>
+                <div class="setting-group">
+                    <label data-i18n="exportFormat">📦 Format d'import / export</label>
+                    <div class="dropdown dropdown-full" id="format-dropdown">
+                        <button class="dropdown-trigger" id="format-dropdown-trigger">
+                            <span class="dropdown-label" id="format-dropdown-label">JSON</span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                        </button>
+                        <div class="dropdown-menu" id="format-dropdown-menu"></div>
+                    </div>
                 </div>
-                <div class="settings-section">
-                    <h4>🔄 Provider par défaut</h4>
-                    <select id="defaultProvider">
-                        <option value="openrouter">OpenRouter</option>
-                        <option value="groq">GroqCloud</option>
-                        <option value="hf">HuggingFace</option>
-                    </select>
-                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Language Modal -->
+    <div class="modal" id="language-modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 data-i18n="selectLang">🌍 Choisir la langue</h2>
+                <button class="modal-close" id="lang-modal-close"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+            </div>
+            <div class="modal-body lang-grid">
+                <button class="lang-option-btn active" data-lang="fr">🇫🇷 Français</button>
+                <button class="lang-option-btn" data-lang="en">🇬🇧 English</button>
+                <button class="lang-option-btn" data-lang="es">🇪🇸 Español</button>
+                <button class="lang-option-btn" data-lang="de">🇩🇪 Deutsch</button>
+                <button class="lang-option-btn" data-lang="it">🇮🇹 Italiano</button>
+                <button class="lang-option-btn" data-lang="pt">🇵🇹 Português</button>
+                <button class="lang-option-btn" data-lang="ja">🇯🇵 日本語</button>
+                <button class="lang-option-btn" data-lang="zh-CN">🇨🇳 简体中文</button>
+                <button class="lang-option-btn" data-lang="ar" dir="rtl">🇸🇦 العربية (السعودية)</button>
+                <button class="lang-option-btn" data-lang="hi">🇮🇳 हिंदी</button>
+                <button class="lang-option-btn" data-lang="el">🇬🇷 Ελληνικά</button>
+                <button class="lang-option-btn" data-lang="zgh">🇲🇦 ⵜⴰⵎⴰⵣⵉⵖⵜ</button>
             </div>
         </div>
     </div>
 
     <!-- Search Modal -->
-    <div id="searchModal" class="modal">
-        <div class="modal-content glass">
+    <div class="modal" id="search-modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
             <div class="modal-header">
-                <h3><i class="fas fa-search"></i> Rechercher dans les conversations</h3>
-                <button class="modal-close">&times;</button>
+                <h2 data-i18n="search">🔍 Rechercher</h2>
+                <button class="modal-close" id="search-modal-close"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
             </div>
             <div class="modal-body">
-                <input type="text" id="searchInput" class="search-input" placeholder="Termes à rechercher...">
-                <div class="search-results" id="searchResults"></div>
+                <input type="text" id="search-input" class="search-field" placeholder="Rechercher dans les conversations...">
+                <div class="search-results" id="search-results"></div>
             </div>
         </div>
     </div>
 
-    <div id="notification" class="notification"></div>
+    <!-- Install PWA Banner -->
+    <div class="install-banner" id="install-banner">
+        <div class="install-banner-text">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Installer Moult AI Web</span>
+        </div>
+        <div class="install-banner-actions">
+            <button class="install-btn" id="install-accept">Installer</button>
+            <button class="install-dismiss" id="install-dismiss">Plus tard</button>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
 
     <script src="js/script.js"></script>
-    
-    <!-- Register Service Worker -->
     <script>
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js').then(reg => {
-                console.log('SW registered:', reg);
-            }).catch(err => {
-                console.log('SW failed:', err);
-            });
+            window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
         }
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            setTimeout(() => document.getElementById('install-banner')?.classList.add('visible'), 5000);
+        });
+        document.getElementById('install-accept')?.addEventListener('click', async () => {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            await deferredPrompt.userChoice;
+            deferredPrompt = null;
+            document.getElementById('install-banner')?.classList.remove('visible');
+        });
+        document.getElementById('install-dismiss')?.addEventListener('click', () => {
+            document.getElementById('install-banner')?.classList.remove('visible');
+        });
     </script>
 </body>
 </html>
