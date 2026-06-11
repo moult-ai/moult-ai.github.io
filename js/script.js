@@ -1,6 +1,6 @@
 /**
- * Moult AI Web — Frontend Controller v3
- * Full i18n, offline detection, proper code blocks, math, custom dropdowns
+ * Moult AI Web — Frontend Controller v4
+ * Full i18n, offline detection, proper code blocks, math, custom dropdowns, PWA auto-update, delete all conversations
  */
 
 // ==========================================
@@ -30,7 +30,13 @@ const I18N = {
         copyCode: 'Copier', loading: 'Chargement...', mode: 'Mode',
         selectLang: '🌍 Choisir la langue', paramTitle: '⚙️ Paramètres',
         exportLabel: 'Format d\'export', searchPlaceholder: 'Rechercher dans les conversations...',
-        aiLabel: 'Moult AI Web', youLabel: 'Vous'
+        aiLabel: 'Moult AI Web', youLabel: 'Vous',
+        deleteAllTitle: '🗑️ Supprimer toutes les conversations',
+        deleteAllConfirm: 'Êtes-vous sûr de vouloir supprimer TOUTES vos conversations ?',
+        deleteAllWarning: '⚠️ Cette action est irréversible et supprimera définitivement tout votre historique.',
+        cancel: 'Annuler',
+        confirmDelete: 'Oui, tout supprimer',
+        allConversationsDeleted: 'Toutes les conversations ont été supprimées'
     },
     en: {
         newChat: 'New chat', search: 'Search', import: 'Import', history: 'History',
@@ -55,7 +61,13 @@ const I18N = {
         copyCode: 'Copy', loading: 'Loading...', mode: 'Mode',
         selectLang: '🌍 Choose language', paramTitle: '⚙️ Settings',
         exportLabel: 'Export format', searchPlaceholder: 'Search conversations...',
-        aiLabel: 'Moult AI Web', youLabel: 'You'
+        aiLabel: 'Moult AI Web', youLabel: 'You',
+        deleteAllTitle: '🗑️ Delete all conversations',
+        deleteAllConfirm: 'Are you sure you want to delete ALL your conversations?',
+        deleteAllWarning: '⚠️ This action is irreversible and will permanently delete all your history.',
+        cancel: 'Cancel',
+        confirmDelete: 'Yes, delete all',
+        allConversationsDeleted: 'All conversations have been deleted'
     },
     es: {
         newChat: 'Nuevo chat', search: 'Buscar', import: 'Importar', history: 'Historial',
@@ -80,7 +92,13 @@ const I18N = {
         copyCode: 'Copiar', loading: 'Cargando...', mode: 'Modo',
         selectLang: '🌍 Elegir idioma', paramTitle: '⚙️ Ajustes',
         exportLabel: 'Formato de export', searchPlaceholder: 'Buscar conversaciones...',
-        aiLabel: 'Moult AI Web', youLabel: 'Tú'
+        aiLabel: 'Moult AI Web', youLabel: 'Tú',
+        deleteAllTitle: '🗑️ Eliminar todas las conversaciones',
+        deleteAllConfirm: '¿Estás seguro de que quieres eliminar TODAS tus conversaciones?',
+        deleteAllWarning: '⚠️ Esta acción es irreversible y eliminará permanentemente todo tu historial.',
+        cancel: 'Cancelar',
+        confirmDelete: 'Sí, eliminar todo',
+        allConversationsDeleted: 'Todas las conversaciones han sido eliminadas'
     },
     de: {
         newChat: 'Neuer Chat', search: 'Suchen', import: 'Importieren', history: 'Verlauf',
@@ -105,7 +123,13 @@ const I18N = {
         copyCode: 'Kopieren', loading: 'Laden...', mode: 'Modus',
         selectLang: '🌍 Sprache wählen', paramTitle: '⚙️ Einstellungen',
         exportLabel: 'Export-Format', searchPlaceholder: 'Konversationen suchen...',
-        aiLabel: 'Moult AI Web', youLabel: 'Du'
+        aiLabel: 'Moult AI Web', youLabel: 'Du',
+        deleteAllTitle: '🗑️ Alle Konversationen löschen',
+        deleteAllConfirm: 'Sind Sie sicher, dass Sie ALLE Ihre Konversationen löschen möchten?',
+        deleteAllWarning: '⚠️ Diese Aktion ist irreversibel und löscht dauerhaft Ihren gesamten Verlauf.',
+        cancel: 'Abbrechen',
+        confirmDelete: 'Ja, alles löschen',
+        allConversationsDeleted: 'Alle Konversationen wurden gelöscht'
     },
     it: {
         newChat: 'Nuova chat', search: 'Cerca', import: 'Importa', history: 'Cronologia',
@@ -130,7 +154,13 @@ const I18N = {
         copyCode: 'Copia', loading: 'Caricamento...', mode: 'Modalità',
         selectLang: '🌍 Scegli lingua', paramTitle: '⚙️ Impostazioni',
         exportLabel: 'Formato export', searchPlaceholder: 'Cerca conversazioni...',
-        aiLabel: 'Moult AI Web', youLabel: 'Tu'
+        aiLabel: 'Moult AI Web', youLabel: 'Tu',
+        deleteAllTitle: '🗑️ Elimina tutte le conversazioni',
+        deleteAllConfirm: 'Sei sicuro di voler eliminare TUTTE le tue conversazioni?',
+        deleteAllWarning: '⚠️ Questa azione è irreversibile e cancellerà definitivamente tutta la tua cronologia.',
+        cancel: 'Annulla',
+        confirmDelete: 'Sì, elimina tutto',
+        allConversationsDeleted: 'Tutte le conversazioni sono state eliminate'
     },
     pt: {
         newChat: 'Novo chat', search: 'Pesquisar', import: 'Importar', history: 'Histórico',
@@ -155,7 +185,13 @@ const I18N = {
         copyCode: 'Copiar', loading: 'Carregando...', mode: 'Modo',
         selectLang: '🌍 Escolher idioma', paramTitle: '⚙️ Configurações',
         exportLabel: 'Formato de export', searchPlaceholder: 'Pesquisar conversas...',
-        aiLabel: 'Moult AI Web', youLabel: 'Você'
+        aiLabel: 'Moult AI Web', youLabel: 'Você',
+        deleteAllTitle: '🗑️ Excluir todas as conversas',
+        deleteAllConfirm: 'Tem certeza que deseja excluir TODAS as suas conversas?',
+        deleteAllWarning: '⚠️ Esta ação é irreversível e excluirá permanentemente todo o seu histórico.',
+        cancel: 'Cancelar',
+        confirmDelete: 'Sim, excluir tudo',
+        allConversationsDeleted: 'Todas as conversas foram excluídas'
     },
     ja: {
         newChat: '新しいチャット', search: '検索', import: 'インポート', history: '履歴',
@@ -180,7 +216,13 @@ const I18N = {
         copyCode: 'コピー', loading: '読み込み中...', mode: 'モード',
         selectLang: '🌍 言語を選択', paramTitle: '⚙️ 設定',
         exportLabel: 'エクスポート形式', searchPlaceholder: '会話を検索...',
-        aiLabel: 'Moult AI Web', youLabel: 'あなた'
+        aiLabel: 'Moult AI Web', youLabel: 'あなた',
+        deleteAllTitle: '🗑️ すべての会話を削除',
+        deleteAllConfirm: '本当にすべての会話を削除してもよろしいですか？',
+        deleteAllWarning: '⚠️ この操作は元に戻せず、履歴が完全に削除されます。',
+        cancel: 'キャンセル',
+        confirmDelete: 'はい、すべて削除',
+        allConversationsDeleted: 'すべての会話が削除されました'
     },
     'zh-CN': {
         newChat: '新对话', search: '搜索', import: '导入', history: '历史',
@@ -205,7 +247,13 @@ const I18N = {
         copyCode: '复制', loading: '加载中...', mode: '模式',
         selectLang: '🌍 选择语言', paramTitle: '⚙️ 设置',
         exportLabel: '导出格式', searchPlaceholder: '搜索对话...',
-        aiLabel: 'Moult AI Web', youLabel: '你'
+        aiLabel: 'Moult AI Web', youLabel: '你',
+        deleteAllTitle: '🗑️ 删除所有对话',
+        deleteAllConfirm: '您确定要删除所有对话吗？',
+        deleteAllWarning: '⚠️ 此操作不可逆，将永久删除您的所有历史记录。',
+        cancel: '取消',
+        confirmDelete: '是的，全部删除',
+        allConversationsDeleted: '所有对话已删除'
     },
     ar: {
         newChat: 'محادثة جديدة', search: 'بحث', import: 'استيراد', history: 'السجل',
@@ -230,7 +278,13 @@ const I18N = {
         copyCode: 'نسخ', loading: 'جارٍ التحميل...', mode: 'الوضع',
         selectLang: '🌍 اختر اللغة', paramTitle: '⚙️ الإعدادات',
         exportLabel: 'تنسيق التصدير', searchPlaceholder: 'البحث في المحادثات...',
-        aiLabel: 'Moult AI Web', youLabel: 'أنت'
+        aiLabel: 'Moult AI Web', youLabel: 'أنت',
+        deleteAllTitle: '🗑️ حذف جميع المحادثات',
+        deleteAllConfirm: 'هل أنت متأكد من حذف جميع محادثاتك؟',
+        deleteAllWarning: '⚠️ هذا الإجراء لا رجعة فيه وسيحذف سجلك بالكامل.',
+        cancel: 'إلغاء',
+        confirmDelete: 'نعم، حذف الكل',
+        allConversationsDeleted: 'تم حذف جميع المحادثات'
     },
     hi: {
         newChat: 'नई चैट', search: 'खोजें', import: 'आयात', history: 'इतिहास',
@@ -255,7 +309,13 @@ const I18N = {
         copyCode: 'कॉपी', loading: 'लोड हो रहा है...', mode: 'मोड',
         selectLang: '🌍 भाषा चुनें', paramTitle: '⚙️ सेटिंग्स',
         exportLabel: 'निर्यात प्रारूप', searchPlaceholder: 'बातचीत खोजें...',
-        aiLabel: 'Moult AI Web', youLabel: 'आप'
+        aiLabel: 'Moult AI Web', youLabel: 'आप',
+        deleteAllTitle: '🗑️ सभी बातचीत हटाएं',
+        deleteAllConfirm: 'क्या आप अपनी सभी बातचीत हटाना चाहते हैं?',
+        deleteAllWarning: '⚠️ यह क्रिया अपरिवर्तनीय है और आपका पूरा इतिहास हटा देगी।',
+        cancel: 'रद्द करें',
+        confirmDelete: 'हाँ, सब हटाएं',
+        allConversationsDeleted: 'सभी बातचीत हटा दी गईं'
     },
     el: {
         newChat: 'Νέα συνομιλία', search: 'Αναζήτηση', import: 'Εισαγωγή', history: 'Ιστορικό',
@@ -280,7 +340,13 @@ const I18N = {
         copyCode: 'Αντιγραφή', loading: 'Φόρτωση...', mode: 'Λειτουργία',
         selectLang: '🌍 Επιλογή γλώσσας', paramTitle: '⚙️ Ρυθμίσεις',
         exportLabel: 'Μορφή εξαγωγής', searchPlaceholder: 'Αναζήτηση συνομιλιών...',
-        aiLabel: 'Moult AI Web', youLabel: 'Εσείς'
+        aiLabel: 'Moult AI Web', youLabel: 'Εσείς',
+        deleteAllTitle: '🗑️ Διαγραφή όλων των συνομιλιών',
+        deleteAllConfirm: 'Είστε σίγουροι ότι θέλετε να διαγράψετε ΟΛΕΣ τις συνομιλίες σας;',
+        deleteAllWarning: '⚠️ Αυτή η ενέργεια είναι μη αναστρέψιμη και θα διαγράψει οριστικά όλο το ιστορικό σας.',
+        cancel: 'Ακύρωση',
+        confirmDelete: 'Ναι, διαγραφή όλων',
+        allConversationsDeleted: 'Όλες οι συνομιλίες διαγράφηκαν'
     },
     zgh: {
         newChat: 'Asnas n tmawlit', search: 'Nadi', import: 'Kter', history: 'Amagrad',
@@ -305,7 +371,13 @@ const I18N = {
         copyCode: 'Nɣel', loading: 'Yessali...', mode: 'Askara',
         selectLang: '🌍 Fren tutlayt', paramTitle: '⚙️ Iɣewwaren',
         exportLabel: 'Amawḍu n usifeḍ', searchPlaceholder: 'Nadi deg yimasnas...',
-        aiLabel: 'Moult AI Web', youLabel: 'D-k'
+        aiLabel: 'Moult AI Web', youLabel: 'D-k',
+        deleteAllTitle: '🗑️ Kkes akk imasnas',
+        deleteAllConfirm: 'Tcetkeḍ ad tekkseḍ akk imasnas-nnek?',
+        deleteAllWarning: '⚠️ Ayagi ur d ittuɣal ara, arak ad tveṛḍeḍ akk amezruy-nnek.',
+        cancel: 'Sefsex',
+        confirmDelete: 'Ih, kkes akk',
+        allConversationsDeleted: 'Kkent akk imasnas'
     }
 };
 
@@ -574,6 +646,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupEvents();
     applyTranslations();
     setupOfflineDetection();
+    setupPWAUpdate();
     el.messageInput?.focus();
     enforceHistoryTitleStyles();
 });
@@ -632,6 +705,37 @@ function setupOfflineDetection() {
         bar.textContent = '📡 ' + t('offline');
         bar.className = 'offline-bar';
         bar.style.display = 'block';
+    }
+}
+
+// ==========================================
+// PWA AUTO-UPDATE
+// ==========================================
+function setupPWAUpdate() {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.ready.then(registration => {
+            // Check for updates every hour
+            setInterval(() => {
+                registration.update();
+                console.log('[App] Checking for SW updates...');
+            }, 60 * 60 * 1000);
+        });
+        
+        // Listen for messages from service worker
+        navigator.serviceWorker.addEventListener('message', event => {
+            if (event.data && event.data.type === 'UPDATE_AVAILABLE') {
+                console.log('[App] Update available, reloading...');
+                showToast('📱 ' + (currentLang === 'fr' ? 'Nouvelle version disponible, mise à jour...' : 'New version available, updating...'), 'info');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            }
+        });
+        
+        // Check for update on page load
+        navigator.serviceWorker.ready.then(registration => {
+            registration.update();
+        });
     }
 }
 
@@ -740,6 +844,38 @@ function updateProviderStatus(providers) {
 }
 
 // ==========================================
+// DELETE ALL CONVERSATIONS MODAL
+// ==========================================
+function showDeleteAllModal() {
+    const modal = document.getElementById('delete-all-modal');
+    if (modal) modal.classList.add('active');
+}
+
+function closeDeleteAllModal() {
+    const modal = document.getElementById('delete-all-modal');
+    if (modal) modal.classList.remove('active');
+}
+
+function clearAllConversations() {
+    state.conversations = [];
+    state.currentConversationId = null;
+    saveConversations();
+    
+    if (el.messagesArea) {
+        el.messagesArea.innerHTML = '';
+        el.messagesArea.classList.remove('active');
+    }
+    if (el.welcomeScreen) el.welcomeScreen.style.display = 'flex';
+    if (el.messageInput) {
+        el.messageInput.value = '';
+        handleInput();
+    }
+    renderHistory();
+    showToast(t('allConversationsDeleted'), 'success');
+    closeDeleteAllModal();
+}
+
+// ==========================================
 // EVENTS
 // ==========================================
 function setupEvents() {
@@ -798,7 +934,15 @@ function setupEvents() {
     }
 
     el.exportBtn?.addEventListener('click', exportConversations);
-    el.clearChatBtn?.addEventListener('click', clearCurrentChat);
+    
+    // Delete all conversations - corbeille button
+    el.clearChatBtn?.addEventListener('click', () => {
+        if (state.conversations.length === 0) {
+            showToast(t('noHistory'), 'warning');
+            return;
+        }
+        showDeleteAllModal();
+    });
 
     document.querySelectorAll('.quick-action').forEach(btn => {
         btn.addEventListener('click', () => { 
@@ -838,6 +982,12 @@ function setupEvents() {
             showToast(`${t('langChanged')} ${btn.textContent.trim()}`, 'success');
         });
     });
+
+    // Delete modal event listeners
+    document.getElementById('delete-all-modal-close')?.addEventListener('click', closeDeleteAllModal);
+    document.querySelector('#delete-all-modal .modal-overlay')?.addEventListener('click', closeDeleteAllModal);
+    document.getElementById('delete-all-cancel')?.addEventListener('click', closeDeleteAllModal);
+    document.getElementById('delete-all-confirm')?.addEventListener('click', clearAllConversations);
 
     const savedLang = localStorage.getItem('moult-lang') || 'fr';
     currentLang = savedLang;
@@ -927,7 +1077,23 @@ function getCurrentConversation() { return state.conversations.find(c => c.id ==
 function addMessageToConversation(role, content, meta = {}) { const conv = getCurrentConversation(); if (!conv) return; conv.messages.push({ role, content, timestamp: new Date().toISOString(), ...meta }); conv.updatedAt = new Date().toISOString(); if (conv.messages.length === 1 && role === 'user') conv.title = content.length > 40 ? content.substring(0, 40) + '...' : content; saveConversations(); renderHistory(); }
 function loadConversation(id) { const conv = state.conversations.find(c => c.id === id); if (!conv) return; state.currentConversationId = id; el.welcomeScreen.style.display = 'none'; el.messagesArea.classList.add('active'); el.messagesArea.innerHTML = ''; conv.messages.forEach(m => renderMessage(m.role, m.content, m)); renderHistory(); scrollToBottom(); if (window.innerWidth <= 768) closeSidebar(); }
 function deleteConversation(id, event) { event.stopPropagation(); state.conversations = state.conversations.filter(c => c.id !== id); if (state.currentConversationId === id) startNewChat(); saveConversations(); renderHistory(); showToast(t('convDeleted'), 'success'); }
-function clearCurrentChat() { const conv = getCurrentConversation(); if (conv) { conv.messages = []; conv.updatedAt = new Date().toISOString(); saveConversations(); } state.currentConversationId = null; el.messagesArea.innerHTML = ''; el.messagesArea.classList.remove('active'); if (el.welcomeScreen) el.welcomeScreen.style.display = 'flex'; renderHistory(); showToast(t('convCleared'), 'success'); }
+
+// Note: clearCurrentChat has been replaced by clearAllConversations for the trash icon
+// The old clearCurrentChat (which only cleared current chat) is kept for potential use
+function clearCurrentChat() { 
+    const conv = getCurrentConversation(); 
+    if (conv) { 
+        conv.messages = []; 
+        conv.updatedAt = new Date().toISOString(); 
+        saveConversations(); 
+    } 
+    state.currentConversationId = null; 
+    el.messagesArea.innerHTML = ''; 
+    el.messagesArea.classList.remove('active'); 
+    if (el.welcomeScreen) el.welcomeScreen.style.display = 'flex'; 
+    renderHistory(); 
+    showToast(t('convCleared'), 'success'); 
+}
 
 // ==========================================
 // HISTORY RENDER
@@ -1154,9 +1320,9 @@ function formatMarkdown(text) {
         if (firstRowMatch) {
             const thead = '<thead>' + firstRowMatch[0] + '</thead>';
             const tbody = '<tbody>' + cleaned.replace(firstRowMatch[0], '') + '</tbody>';
-            return '<table>' + thead + tbody + '</tr>';
+            return '<td>' + thead + tbody + '</table>';
         }
-        return '<td>' + cleaned + '</table>';
+        return '</table>' + cleaned + '</table>';
     });
 
     // 12) Links and images
