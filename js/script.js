@@ -471,15 +471,23 @@ function createCustomDropdown(selectId, dropdownId, options, onChange, openUp = 
         currentOptions.forEach(opt => {
             const div = document.createElement('div');
             div.className = 'custom-option';
-            div.textContent = opt.label || opt;
+            // Tronquer les longs noms de modèles sur mobile
+            let displayLabel = opt.label || opt;
+            if (window.innerWidth <= 768 && displayLabel.length > 35) {
+                displayLabel = displayLabel.substring(0, 32) + '...';
+            }
+            div.textContent = displayLabel;
             div.dataset.value = opt.value || opt;
+            div.title = opt.label || opt; // Tooltip avec nom complet
             
             if (div.dataset.value === currentValue) div.classList.add('selected');
             
             div.addEventListener('click', (e) => {
                 e.stopPropagation();
                 currentValue = div.dataset.value;
-                if (selectedText) selectedText.textContent = div.textContent;
+                // Afficher le nom complet dans le sélecteur
+                const fullLabel = opt.label || opt;
+                if (selectedText) selectedText.textContent = fullLabel;
                 
                 dropdown.classList.remove('open');
                 trigger.classList.remove('open');
@@ -494,61 +502,103 @@ function createCustomDropdown(selectId, dropdownId, options, onChange, openUp = 
             dropdown.appendChild(div);
         });
         
-        if (!fullWidth) {
+        if (!fullWidth && trigger) {
             dropdown.style.minWidth = trigger.offsetWidth + 'px';
+        }
+        // Sur mobile, éviter que le dropdown soit trop large
+        if (window.innerWidth <= 768) {
+            dropdown.style.maxWidth = (window.innerWidth - 32) + 'px';
         }
     }
 
     function positionDropdown() {
         if (!dropdown.classList.contains('open')) return;
         
+        const rect = trigger.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const dropdownHeight = Math.min(dropdown.scrollHeight, 280);
+        
         if (openUp) {
-            dropdown.style.top = 'auto';
-            dropdown.style.bottom = '100%';
-            dropdown.style.top = '';
+            const spaceAbove = rect.top;
+            if (spaceAbove > dropdownHeight + 10) {
+                dropdown.style.top = 'auto';
+                dropdown.style.bottom = '100%';
+                dropdown.style.top = '';
+            } else {
+                dropdown.style.bottom = '';
+                dropdown.style.top = 'calc(100% + 4px)';
+            }
         } else {
-            dropdown.style.bottom = '';
-            dropdown.style.top = 'calc(100% + 4px)';
+            const spaceBelow = viewportHeight - rect.bottom;
+            if (spaceBelow < dropdownHeight + 10 && rect.top > dropdownHeight + 10) {
+                dropdown.style.top = 'auto';
+                dropdown.style.bottom = '100%';
+            } else {
+                dropdown.style.bottom = '';
+                dropdown.style.top = 'calc(100% + 4px)';
+            }
         }
         
         if (!fullWidth) {
-            const rect = trigger.getBoundingClientRect();
-            const dropdownRight = rect.left + dropdown.offsetWidth;
-            if (dropdownRight > window.innerWidth - 10) {
-                dropdown.style.left = 'auto';
-                dropdown.style.right = '0';
-            } else {
-                dropdown.style.left = '0';
-                dropdown.style.right = 'auto';
+            let left = rect.left;
+            const dropdownWidth = dropdown.offsetWidth;
+            if (left + dropdownWidth > window.innerWidth - 10) {
+                left = window.innerWidth - dropdownWidth - 10;
             }
+            if (left < 10) left = 10;
+            dropdown.style.left = left + 'px';
+            dropdown.style.right = 'auto';
+        }
+    }
+
+    // Fermer les dropdowns au clic en dehors
+    function closeDropdownOnClickOutside(e) {
+        if (!trigger.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.remove('open');
+            trigger.classList.remove('open');
         }
     }
 
     trigger.addEventListener('click', (e) => {
         e.stopPropagation();
+        e.preventDefault();
         const isOpen = dropdown.classList.contains('open');
         
-        document.querySelectorAll('.custom-dropdown').forEach(d => d.classList.remove('open'));
-        document.querySelectorAll('.custom-select').forEach(s => s.classList.remove('open'));
+        // Fermer tous les autres dropdowns
+        document.querySelectorAll('.custom-dropdown').forEach(d => {
+            if (d !== dropdown) d.classList.remove('open');
+        });
+        document.querySelectorAll('.custom-select').forEach(s => {
+            if (s !== trigger) s.classList.remove('open');
+        });
         
         if (!isOpen) {
             dropdown.classList.add('open');
             trigger.classList.add('open');
             renderOptions();
+            // Petit délai pour que le rendu soit fait avant le positionnement
             setTimeout(positionDropdown, 10);
-        }
-    });
-
-    document.addEventListener('click', (e) => {
-        if (!trigger.contains(e.target) && !dropdown.contains(e.target)) {
+        } else {
             dropdown.classList.remove('open');
             trigger.classList.remove('open');
         }
     });
+
+    document.removeEventListener('click', closeDropdownOnClickOutside);
+    document.addEventListener('click', closeDropdownOnClickOutside);
     
+    window.removeEventListener('resize', positionDropdown);
     window.addEventListener('resize', () => {
         if (dropdown.classList.contains('open')) {
             positionDropdown();
+        }
+    });
+    
+    // Écouter les changements d'orientation
+    window.removeEventListener('orientationchange', positionDropdown);
+    window.addEventListener('orientationchange', () => {
+        if (dropdown.classList.contains('open')) {
+            setTimeout(positionDropdown, 50);
         }
     });
 
@@ -1312,7 +1362,7 @@ function formatMarkdown(text) {
     html = html.replace(/^\|(.+)\|$/gm, (m, content) => {
         const cells = content.split('|').map(c => c.trim());
         if (cells.every(c => /^[-:]+$/.test(c))) return '%%TSEP%%';
-        return '<tr>' + cells.map(c => `<td>${c}</td>`).join('') + '</tr>';
+        return '<tr>' + cells.map(c => `<tr>${c}</table>`).join('') + '</tr>';
     });
     html = html.replace(/((?:<tr>[\s\S]*?<\/tr>\n?%%TSEP%%?\n?)+)/g, (m) => {
         const cleaned = m.replace(/%%TSEP%%\n?/g, '');
@@ -1320,9 +1370,9 @@ function formatMarkdown(text) {
         if (firstRowMatch) {
             const thead = '<thead>' + firstRowMatch[0] + '</thead>';
             const tbody = '<tbody>' + cleaned.replace(firstRowMatch[0], '') + '</tbody>';
-            return '<td>' + thead + tbody + '</table>';
+            return '</td>' + thead + tbody + '</table>';
         }
-        return '</table>' + cleaned + '</table>';
+        return '<table>' + cleaned + '</table>';
     });
 
     // 12) Links and images
