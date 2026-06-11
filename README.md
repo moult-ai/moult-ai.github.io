@@ -58,10 +58,10 @@ Le proxy gère les appels aux APIs d'IA et assure la sécurité des clés API.
 
 ```bash
 # Installer avec Node.js
-bash install-w-node.sh
+bash install-with-node.sh
 
 # Installer avec Bun
-bash install-moult-ai-proxy.sh
+bash install-with-bun.sh
 ```
 
 #### 2. Configuration
@@ -129,7 +129,7 @@ L'application s'adapte dynamiquement aux modèles fournis par le proxy. Par déf
 
 ### 📄 Licence
 
-© 2025 Lombard Web Services — Tous droits réservés
+© 2026 Lombard Web Services — Tous droits réservés
 
 ---
 
@@ -256,4 +256,4 @@ The app dynamically adapts to models provided by the proxy. Default:
 
 ### 📄 License
 
-© 2025 Lombard Web Services — All rights reserved
+© 2026 Lombard Web Services — All rights reserved
