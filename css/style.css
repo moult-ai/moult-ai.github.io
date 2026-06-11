@@ -246,13 +246,40 @@ body{font-family:var(--font-sans);background:var(--bg-primary);color:var(--text-
     max-height: 280px;
 }
 
+/* Format dropdown - Full width in modal, opens upward */
+.format-full-width {
+    display: block;
+    width: 100%;
+}
+
+.format-full-width .custom-select {
+    width: 100%;
+    white-space: normal;
+    justify-content: space-between;
+}
+
+.format-dropdown-up {
+    top: auto !important;
+    bottom: calc(100% + 4px) !important;
+    min-width: 100% !important;
+}
+
 .header-model-selector .custom-select-wrapper {
     min-width: 200px;
 }
 
-/* Format dropdown in modal - ensure it's above modal content */
+/* Modal dropdown fixes */
 .modal .custom-dropdown {
     z-index: 10001;
+}
+
+.modal-content {
+    overflow: visible !important;
+}
+
+.modal-content .modal-body {
+    overflow-y: auto !important;
+    overflow-x: visible !important;
 }
 
 /* ===== CHAT ===== */
