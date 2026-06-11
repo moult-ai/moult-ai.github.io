@@ -1,0 +1,45 @@
+{
+    "name": "Moult AI Web",
+    "short_name": "Moult AI",
+    "description": "Interface unifiée pour interroger plusieurs modèles d'IA",
+    "start_url": "/new/index.html",
+    "display": "standalone",
+    "background_color": "#0a0e17",
+    "theme_color": "#0a0e17",
+    "orientation": "portrait-primary",
+    "scope": "/new/",
+    "lang": "fr",
+    "icons": [
+        {
+            "src": "images/logo16.png",
+            "sizes": "16x16",
+            "type": "image/png"
+        },
+        {
+            "src": "images/logo48.png",
+            "sizes": "48x48",
+            "type": "image/png"
+        },
+        {
+            "src": "images/logo128.png",
+            "sizes": "128x128",
+            "type": "image/png"
+        },
+        {
+            "src": "images/logo512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "images/logo512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "form_factor": "wide",
+            "label": "Moult AI Web"
+        }
+    ],
+    "categories": ["productivity", "utilities"]
+}
