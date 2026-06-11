@@ -66,7 +66,6 @@ self.addEventListener('fetch', event => {
         event.respondWith(
             fetch(event.request)
                 .then(response => {
-                    // Cache the new version
                     const responseClone = response.clone();
                     caches.open(CACHE_NAME).then(cache => {
                         cache.put(event.request, responseClone);
@@ -74,7 +73,6 @@ self.addEventListener('fetch', event => {
                     return response;
                 })
                 .catch(() => {
-                    // Fallback to cache if offline
                     return caches.match(event.request)
                         .then(cached => cached || caches.match('./index.html'));
                 })
@@ -82,14 +80,12 @@ self.addEventListener('fetch', event => {
         return;
     }
 
-    // For static assets - cache first, then network (update cache in background)
+    // For static assets - cache first, then network
     event.respondWith(
         caches.match(event.request)
             .then(cachedResponse => {
-                // Return cached response immediately
                 const fetchPromise = fetch(event.request)
                     .then(networkResponse => {
-                        // Update cache with new version
                         if (networkResponse && networkResponse.status === 200) {
                             const responseClone = networkResponse.clone();
                             caches.open(CACHE_NAME).then(cache => {
@@ -99,13 +95,11 @@ self.addEventListener('fetch', event => {
                         return networkResponse;
                     })
                     .catch(() => {
-                        // If network fails and we have cached response, return it
                         if (cachedResponse) return cachedResponse;
-                        // Return offline fallback for images
                         if (event.request.destination === 'image') {
-                            return new Response('', { status: 404, statusText: 'Not Found' });
+                            return new Response('', { status: 404 });
                         }
-                        return new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
+                        return new Response('Offline', { status: 503 });
                     });
 
                 return cachedResponse || fetchPromise;
@@ -113,15 +107,13 @@ self.addEventListener('fetch', event => {
     );
 });
 
-// Check for updates periodically
+// Check for updates
 self.addEventListener('message', event => {
     if (event.data && event.data.type === 'CHECK_UPDATE') {
         console.log('[SW] Checking for updates...');
-        // Force refresh of cache by fetching index.html
         fetch('./index.html', { cache: 'reload' })
             .then(response => {
                 if (response.ok) {
-                    // Notify client that update is available
                     self.clients.matchAll().then(clients => {
                         clients.forEach(client => {
                             client.postMessage({ type: 'UPDATE_AVAILABLE', version: VERSION });
@@ -132,16 +124,3 @@ self.addEventListener('message', event => {
             .catch(err => console.error('[SW] Update check failed:', err));
     }
 });
-
-// Background sync for offline messages (optional)
-self.addEventListener('sync', event => {
-    if (event.tag === 'sync-messages') {
-        console.log('[SW] Background sync triggered');
-        event.waitUntil(syncPendingMessages());
-    }
-});
-
-async function syncPendingMessages() {
-    // Implement message sync logic if needed
-    console.log('[SW] Syncing pending messages...');
-}

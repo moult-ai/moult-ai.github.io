@@ -1,13 +1,13 @@
 {
     "name": "Moult AI Web",
     "short_name": "Moult AI",
-    "description": "Interface unifiée pour interroger plusieurs modèles d'IA",
-    "start_url": "/new/index.html",
+    "description": "Multi-provider AI gateway",
+    "start_url": "/index.html",
     "display": "standalone",
     "background_color": "#0a0e17",
     "theme_color": "#0a0e17",
     "orientation": "portrait-primary",
-    "scope": "/new/",
+    "scope": "/",
     "lang": "fr",
     "icons": [
         {

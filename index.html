@@ -10,12 +10,13 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Moult AI Web">
     <meta name="mobile-web-app-capable" content="yes">
+	<!-- PWA standalone mode -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="keywords" content="Moult AI, chatbot, IA, intelligence artificielle, OpenRouter, Groq, HuggingFace, LLM, assistant IA, multi-modèles, chat IA, GPT, Llama, Mistral, DeepSeek">
     <meta name="author" content="Lombard Web Services">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
     <meta name="language" content="fr">
     <link rel="canonical" href="https://moult-ai.lombard-web-services.com/">
-
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="Moult AI">
@@ -364,24 +365,58 @@
     </div>
     <script src="js/script.js"></script>
     <script>
+        // Service Worker registration with better PWA support
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('SW registered:', reg))
+                    .catch(err => console.log('SW registration failed:', err));
+            });
         }
+        
+        // PWA Installation
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            setTimeout(() => document.getElementById('install-banner')?.classList.add('visible'), 5000);
+            // Show install banner after 5 seconds
+            setTimeout(() => {
+                const banner = document.getElementById('install-banner');
+                if (banner) banner.classList.add('visible');
+            }, 5000);
         });
+        
+        // Handle install button click
         document.getElementById('install-accept')?.addEventListener('click', async () => {
             if (!deferredPrompt) return;
             deferredPrompt.prompt();
-            await deferredPrompt.userChoice;
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log(`User response to install: ${outcome}`);
             deferredPrompt = null;
             document.getElementById('install-banner')?.classList.remove('visible');
         });
+        
+        // Handle dismiss button
         document.getElementById('install-dismiss')?.addEventListener('click', () => {
             document.getElementById('install-banner')?.classList.remove('visible');
+            // Don't show again for this session
+            sessionStorage.setItem('install-banner-dismissed', 'true');
+        });
+        
+        // Check if already installed (standalone mode)
+        if (window.matchMedia('(display-mode: standalone)').matches || 
+            window.navigator.standalone === true) {
+            console.log('App is running in standalone mode');
+            document.body.classList.add('pwa-standalone');
+        }
+        
+        // Monitor display mode changes
+        window.matchMedia('(display-mode: standalone)').addEventListener('change', (e) => {
+            if (e.matches) {
+                document.body.classList.add('pwa-standalone');
+            } else {
+                document.body.classList.remove('pwa-standalone');
+            }
         });
     </script>
 </body>
