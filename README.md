@@ -21,7 +21,7 @@
 | 🎨 **6 thèmes** | Sombre, Clair, Océan, Forêt, Coucher de soleil, Minuit + Système |
 | 🌍 **12 langues** | FR, EN, ES, DE, IT, PT, JA, ZH-CN, AR (RTL), HI, EL, ZGH (Tamazight) |
 | 📱 **PWA** | Installable, fonctionne hors-ligne (page d'accueil) |
-| 💾 **Historique local** | Conversations sauvegardées dans localStorage (max. 50) |
+| 💾 **Historique local** | Conversations sauvegardées dans localStorage (max. 5000) |
 | 📦 **Import / Export** | JSON, JSONL, Markdown, Format Alpaca |
 | 🔍 **Recherche** | Recherche instantanée dans les conversations |
 | 📐 **Responsive** | Adapté mobile, tablette et desktop |
@@ -148,7 +148,7 @@ L'application s'adapte dynamiquement aux modèles fournis par le proxy. Par déf
 | 🎨 **6 themes** | Dark, Light, Ocean, Forest, Sunset, Midnight + System |
 | 🌍 **12 languages** | FR, EN, ES, DE, IT, PT, JA, ZH-CN, AR (RTL), HI, EL, ZGH (Tamazight) |
 | 📱 **PWA** | Installable, works offline (home page) |
-| 💾 **Local history** | Conversations saved in localStorage (max 50) |
+| 💾 **Local history** | Conversations saved in localStorage (max 5000) |
 | 📦 **Import / Export** | JSON, JSONL, Markdown, Alpaca format |
 | 🔍 **Search** | Instant search across conversations |
 | 📐 **Responsive** | Mobile, tablet, and desktop optimized |
