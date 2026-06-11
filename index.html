@@ -55,10 +55,11 @@
     <link rel="manifest" href="manifest.json">
     <link rel="shortcut icon" href="images/favicon/favicon.ico">
 
-    <!-- Fonts: Roboto + Inter + JetBrains Mono + Noto Sans Arabic -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Roboto:wght@300;400;500;700&family=Noto+Sans:wght@400;500;700&family=Noto+Sans+Arabic:wght@400;500;700&family=Noto+Sans+Tifinagh:wght@400;700&family=Noto+Sans+Devanagari:wght@400;500;700&display=swap" rel="stylesheet">
+    
     <!-- KaTeX for math formulas -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
@@ -173,12 +174,13 @@
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
                 </button>
                 <div class="header-model-selector">
-                    <div class="dropdown" id="model-dropdown">
-                        <button class="dropdown-trigger" id="model-dropdown-trigger">
-                            <span class="dropdown-label" id="model-dropdown-label">Assistant</span>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
-                        </button>
-                        <div class="dropdown-menu" id="model-dropdown-menu"></div>
+                    <!-- Custom Dropdown pour les modèles -->
+                    <div class="model-select-wrapper custom-select-wrapper">
+                        <div id="model-select" class="custom-select">
+                            <span class="selected-text">Chargement des modèles...</span>
+                            <span class="arrow">▼</span>
+                        </div>
+                        <div id="model-dropdown" class="custom-dropdown"></div>
                     </div>
                 </div>
                 <div class="header-actions">
@@ -228,14 +230,12 @@
                         </button>
                     </div>
                     <div class="input-footer">
-                        <div class="mode-select-wrapper">
-                            <div class="dropdown dropdown-sm dropdown-up" id="mode-dropdown">
-                                <button class="dropdown-trigger" id="mode-dropdown-trigger">
-                                    <span class="dropdown-label" id="mode-dropdown-label">🤖 Assistant</span>
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
-                                </button>
-                                <div class="dropdown-menu" id="mode-dropdown-menu"></div>
+                        <div class="mode-select-wrapper custom-select-wrapper">
+                            <div id="mode-select" class="custom-select">
+                                <span class="selected-text">🤖 Assistant</span>
+                                <span class="arrow">▼</span>
                             </div>
+                            <div id="mode-dropdown" class="custom-dropdown"></div>
                         </div>
                         <span class="shortcut-hint">Entrée pour envoyer · Maj+Entrée pour nouvelle ligne</span>
                     </div>
@@ -276,12 +276,12 @@
                 </div>
                 <div class="setting-group">
                     <label data-i18n="exportFormat">📦 Format d'import / export</label>
-                    <div class="dropdown dropdown-full" id="format-dropdown">
-                        <button class="dropdown-trigger" id="format-dropdown-trigger">
-                            <span class="dropdown-label" id="format-dropdown-label">JSON</span>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
-                        </button>
-                        <div class="dropdown-menu" id="format-dropdown-menu"></div>
+                    <div class="custom-select-wrapper">
+                        <div id="format-select" class="custom-select">
+                            <span class="selected-text">JSON</span>
+                            <span class="arrow">▼</span>
+                        </div>
+                        <div id="format-dropdown" class="custom-dropdown"></div>
                     </div>
                 </div>
             </div>
