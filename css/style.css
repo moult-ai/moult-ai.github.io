@@ -282,6 +282,73 @@ body{font-family:var(--font-sans);background:var(--bg-primary);color:var(--text-
     overflow-x: visible !important;
 }
 
+/* ===== DROPDOWN MOBILE RESPONSIVE ===== */
+@media (max-width: 768px) {
+    /* Modèle dropdown - texte réduit sur mobile */
+    .header-model-selector .custom-select {
+        font-size: 0.75rem;
+        padding: var(--space-xs) var(--space-sm);
+        max-width: 160px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .header-model-selector .custom-select .selected-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 120px;
+    }
+    
+    /* Dropdown menu adapté à l'écran mobile */
+    .custom-dropdown {
+        max-height: 280px;
+        width: auto;
+        min-width: 200px;
+        max-width: calc(100vw - 32px);
+    }
+    
+    .custom-option {
+        white-space: normal;
+        word-break: break-word;
+        font-size: 0.75rem;
+        padding: var(--space-sm) var(--space-md);
+    }
+    
+    /* Mode dropdown */
+    .mode-select-wrapper .custom-select {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+    }
+    
+    .mode-select-wrapper .custom-select .selected-text {
+        font-size: 0.75rem;
+    }
+    
+    /* Header model selector */
+    .header-model-selector {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+    }
+    
+    .header-model-selector .custom-select-wrapper {
+        width: 100%;
+        max-width: 180px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-model-selector .custom-select .selected-text {
+        max-width: 100px;
+    }
+    
+    .custom-option {
+        font-size: 0.7rem;
+        padding: var(--space-xs) var(--space-sm);
+    }
+}
+
 /* ===== CHAT ===== */
 .chat-container{flex:1;overflow-y:auto;position:relative;scroll-behavior:smooth}
 .welcome-screen{display:flex;align-items:center;justify-content:center;min-height:100%;padding:var(--space-2xl)}
@@ -426,6 +493,34 @@ body{font-family:var(--font-sans);background:var(--bg-primary);color:var(--text-
 .install-btn:hover{box-shadow:var(--shadow-glow)}
 .install-dismiss{padding:var(--space-sm) var(--space-md);background:none;border:1px solid var(--border-subtle);border-radius:var(--radius-md);color:var(--text-secondary);font-family:inherit;font-size:.875rem;cursor:pointer;transition:all var(--transition-fast)}
 .install-dismiss:hover{background:var(--bg-tertiary);color:var(--text-primary)}
+
+/* ===== PWA STANDALONE MODE ===== */
+/* Cache la barre d'adresse sur mobile en mode standalone */
+body.pwa-standalone {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+}
+
+/* Amélioration pour le mode standalone sur iOS */
+@supports (padding: max(0px)) {
+    body {
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+    
+    .sidebar {
+        padding-top: env(safe-area-inset-top);
+    }
+    
+    .main-header {
+        padding-top: max(var(--space-md), env(safe-area-inset-top));
+    }
+}
 
 /* Math formulas */
 .math-block{display:block;text-align:center;padding:var(--space-md);margin:var(--space-md) 0;background:var(--code-bg);border-radius:var(--radius-md);border:1px solid var(--border-subtle);font-family:'Courier New',monospace;font-size:1.1rem;overflow-x:auto;color:var(--text-primary)}
