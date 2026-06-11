@@ -185,10 +185,10 @@ The proxy handles AI API calls and secures API keys.
 
 ```bash
 # Install with Node.js
-bash install-w-node.sh
+bash install-with-node.sh
 
 # Install with Bun
-bash install-moult-ai-proxy.sh
+bash install-with-bun.sh
 ```
 
 #### 2. Configuration
