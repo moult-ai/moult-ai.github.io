@@ -1,6 +1,6 @@
 /**
  * Moult AI Web — Frontend Controller v3
- * Full i18n, offline detection, proper code blocks, math, custom dropdowns (width: auto)
+ * Full i18n, offline detection, proper code blocks, math, custom dropdowns
  */
 
 // ==========================================
@@ -382,9 +382,9 @@ const el = {};
 function $(id) { return document.getElementById(id); }
 
 // ==========================================
-// CUSTOM DROPDOWNS (width: auto / min-width: max-content)
+// CUSTOM DROPDOWNS
 // ==========================================
-function createCustomDropdown(selectId, dropdownId, options, onChange, openUp = false) {
+function createCustomDropdown(selectId, dropdownId, options, onChange, openUp = false, fullWidth = false) {
     const trigger = document.getElementById(selectId);
     const dropdown = document.getElementById(dropdownId);
     const selectedText = trigger ? trigger.querySelector('.selected-text') : null;
@@ -422,39 +422,33 @@ function createCustomDropdown(selectId, dropdownId, options, onChange, openUp = 
             dropdown.appendChild(div);
         });
         
-        // Adjust dropdown width to fit content
-        dropdown.style.minWidth = trigger.offsetWidth + 'px';
+        if (!fullWidth) {
+            dropdown.style.minWidth = trigger.offsetWidth + 'px';
+        }
     }
 
     function positionDropdown() {
         if (!dropdown.classList.contains('open')) return;
         
-        const rect = trigger.getBoundingClientRect();
-        const dropdownRect = dropdown.getBoundingClientRect();
-        
         if (openUp) {
-            const spaceAbove = rect.top;
-            const spaceBelow = window.innerHeight - rect.bottom;
-            const neededHeight = dropdownRect.height;
-            
-            if (spaceAbove > spaceBelow && spaceAbove > neededHeight + 10) {
-                dropdown.style.top = 'auto';
-                dropdown.style.bottom = '100%';
-                dropdown.style.top = '';
-            } else {
-                dropdown.style.bottom = '';
-                dropdown.style.top = 'calc(100% + 4px)';
-            }
+            dropdown.style.top = 'auto';
+            dropdown.style.bottom = '100%';
+            dropdown.style.top = '';
+        } else {
+            dropdown.style.bottom = '';
+            dropdown.style.top = 'calc(100% + 4px)';
         }
         
-        // Ensure dropdown doesn't go offscreen horizontally
-        const dropdownRight = rect.left + dropdownRect.width;
-        if (dropdownRight > window.innerWidth - 10) {
-            dropdown.style.left = 'auto';
-            dropdown.style.right = '0';
-        } else {
-            dropdown.style.left = '0';
-            dropdown.style.right = 'auto';
+        if (!fullWidth) {
+            const rect = trigger.getBoundingClientRect();
+            const dropdownRight = rect.left + dropdown.offsetWidth;
+            if (dropdownRight > window.innerWidth - 10) {
+                dropdown.style.left = 'auto';
+                dropdown.style.right = '0';
+            } else {
+                dropdown.style.left = '0';
+                dropdown.style.right = 'auto';
+            }
         }
     }
 
@@ -496,7 +490,7 @@ function createCustomDropdown(selectId, dropdownId, options, onChange, openUp = 
 }
 
 function initCustomDropdowns() {
-    // Model dropdown
+    // Model dropdown (inline width)
     const modelOptions = [];
     Object.keys(state.models).forEach(provider => {
         if (state.models[provider] && state.models[provider].length) {
@@ -517,9 +511,9 @@ function initCustomDropdowns() {
         const [provider, ...modelParts] = value.split(':');
         state.currentProvider = provider;
         state.currentModel = modelParts.join(':');
-    });
+    }, false, false);
     
-    // Mode dropdown (opens upward)
+    // Mode dropdown (opens upward, inline width)
     const modeOptions = [
         { value: 'default', label: '🤖 Assistant' },
         { value: 'coding', label: '💻 Code' },
@@ -534,9 +528,9 @@ function initCustomDropdowns() {
         const modeMap = { default: '🤖 Assistant', coding: '💻 Code', creative: '🎨 Créatif', concise: '⚡ Concis', academic: '📚 Académique', debug: '🔍 Debug' };
         const selectedText = document.querySelector('#mode-select .selected-text');
         if (selectedText) selectedText.textContent = modeMap[value] || value;
-    }, true);
+    }, true, false);
     
-    // Format dropdown (in modal)
+    // Format dropdown (full width, opens upward)
     const formatOptions = [
         { value: 'json', label: 'JSON' },
         { value: 'jsonl', label: 'JSONL' },
@@ -548,7 +542,7 @@ function initCustomDropdowns() {
         state.settings.exportFormat = value;
         localStorage.setItem('moult-export-format', value);
         showToast(t('urlUpdated'), 'success');
-    });
+    }, true, true);
 }
 
 function getProviderDisplayName(provider) {
@@ -600,16 +594,6 @@ function enforceHistoryTitleStyles() {
         .history-item.active .history-title {
             font-weight: 500 !important;
             color: var(--accent-primary) !important;
-        }
-        .modal .custom-dropdown {
-            z-index: 10001 !important;
-        }
-        .modal-content {
-            overflow: visible !important;
-        }
-        .modal-content .modal-body {
-            overflow-y: auto !important;
-            overflow-x: visible !important;
         }
     `;
     document.head.appendChild(style);
@@ -1170,9 +1154,9 @@ function formatMarkdown(text) {
         if (firstRowMatch) {
             const thead = '<thead>' + firstRowMatch[0] + '</thead>';
             const tbody = '<tbody>' + cleaned.replace(firstRowMatch[0], '') + '</tbody>';
-            return '<table>' + thead + tbody + '</table>';
+            return '<table>' + thead + tbody + '</tr>';
         }
-        return '</table>' + cleaned + '</table>';
+        return '<td>' + cleaned + '</table>';
     });
 
     // 12) Links and images
