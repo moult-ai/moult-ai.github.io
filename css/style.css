@@ -284,28 +284,22 @@ body{font-family:var(--font-sans);background:var(--bg-primary);color:var(--text-
 
 /* ===== DROPDOWN MOBILE RESPONSIVE ===== */
 @media (max-width: 768px) {
-    /* Modèle dropdown - texte réduit sur mobile */
     .header-model-selector .custom-select {
         font-size: 0.75rem;
         padding: var(--space-xs) var(--space-sm);
         max-width: 160px;
-        overflow: hidden;
-        text-overflow: ellipsis;
     }
     
     .header-model-selector .custom-select .selected-text {
-        white-space: nowrap;
+        max-width: 120px;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 120px;
     }
     
-    /* Dropdown menu adapté à l'écran mobile */
     .custom-dropdown {
         max-height: 280px;
-        width: auto;
-        min-width: 200px;
         max-width: calc(100vw - 32px);
+        min-width: 200px;
     }
     
     .custom-option {
@@ -315,25 +309,17 @@ body{font-family:var(--font-sans);background:var(--bg-primary);color:var(--text-
         padding: var(--space-sm) var(--space-md);
     }
     
-    /* Mode dropdown */
     .mode-select-wrapper .custom-select {
         font-size: 0.75rem;
         padding: 4px 8px;
     }
     
-    .mode-select-wrapper .custom-select .selected-text {
-        font-size: 0.75rem;
-    }
-    
-    /* Header model selector */
     .header-model-selector {
         flex: 1;
         min-width: 0;
-        overflow: hidden;
     }
     
     .header-model-selector .custom-select-wrapper {
-        width: 100%;
         max-width: 180px;
     }
 }
@@ -495,7 +481,6 @@ body{font-family:var(--font-sans);background:var(--bg-primary);color:var(--text-
 .install-dismiss:hover{background:var(--bg-tertiary);color:var(--text-primary)}
 
 /* ===== PWA STANDALONE MODE ===== */
-/* Cache la barre d'adresse sur mobile en mode standalone */
 body.pwa-standalone {
     height: 100vh;
     height: 100dvh;
@@ -504,7 +489,6 @@ body.pwa-standalone {
     width: 100%;
 }
 
-/* Amélioration pour le mode standalone sur iOS */
 @supports (padding: max(0px)) {
     body {
         padding-left: env(safe-area-inset-left);
