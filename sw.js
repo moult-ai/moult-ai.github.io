@@ -1,17 +1,15 @@
-const CACHE_NAME = 'moult-ai-v5';
-const VERSION = '5.0.0';
+const CACHE_NAME = 'moult-ai-v6';
+const VERSION = '6.0.0';
 const urlsToCache = [
     '/',
     '/index.html',
     '/css/style.css',
     '/js/script.js',
     '/manifest.json',
-    '/images/logo.png',
     '/images/logo16.png',
     '/images/logo48.png',
     '/images/logo128.png',
     '/images/logo512.png',
-    '/images/logo500-white.png',
     '/images/favicon/favicon.ico',
     '/images/favicon/favicon-16x16.png',
     '/images/favicon/favicon-32x32.png',
@@ -57,6 +55,7 @@ self.addEventListener('fetch', event => {
         return event.respondWith(fetch(event.request));
     }
 
+    // Navigation requests: network-first, fallback to cache
     if (event.request.mode === 'navigate' || event.request.destination === 'document') {
         event.respondWith(
             fetch(event.request)
@@ -69,12 +68,13 @@ self.addEventListener('fetch', event => {
                 })
                 .catch(() => {
                     return caches.match(event.request)
-                        .then(cached => cached || caches.match('/index.html'));
+                        .then(cached => cached || caches.match('/'));
                 })
         );
         return;
     }
 
+    // Other requests: stale-while-revalidate
     event.respondWith(
         caches.match(event.request)
             .then(cachedResponse => {
@@ -104,7 +104,7 @@ self.addEventListener('fetch', event => {
 self.addEventListener('message', event => {
     if (event.data && event.data.type === 'CHECK_UPDATE') {
         console.log('[SW] Checking for updates...');
-        fetch('/index.html', { cache: 'reload' })
+        fetch('/', { cache: 'reload' })
             .then(response => {
                 if (response.ok) {
                     self.clients.matchAll().then(clients => {

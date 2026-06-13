@@ -329,18 +329,6 @@
         </div>
     </div>
 
-    <!-- Install PWA Banner -->
-    <div class="install-banner" id="install-banner">
-        <div class="install-banner-text">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            <span>Installer Moult AI Web</span>
-        </div>
-        <div class="install-banner-actions">
-            <button class="install-btn" id="install-accept">Installer</button>
-            <button class="install-dismiss" id="install-dismiss">Plus tard</button>
-        </div>
-    </div>
-
     <!-- Toast Container -->
     <div class="toast-container" id="toast-container"></div>
 	<!-- Delete All Conversations Confirmation Modal -->
@@ -373,35 +361,6 @@
                     .catch(err => console.log('SW registration failed:', err));
             });
         }
-        
-        // PWA Installation
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            // Show install banner after 5 seconds
-            setTimeout(() => {
-                const banner = document.getElementById('install-banner');
-                if (banner) banner.classList.add('visible');
-            }, 5000);
-        });
-        
-        // Handle install button click
-        document.getElementById('install-accept')?.addEventListener('click', async () => {
-            if (!deferredPrompt) return;
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            console.log(`User response to install: ${outcome}`);
-            deferredPrompt = null;
-            document.getElementById('install-banner')?.classList.remove('visible');
-        });
-        
-        // Handle dismiss button
-        document.getElementById('install-dismiss')?.addEventListener('click', () => {
-            document.getElementById('install-banner')?.classList.remove('visible');
-            // Don't show again for this session
-            sessionStorage.setItem('install-banner-dismissed', 'true');
-        });
         
         // Check if already installed (standalone mode)
         if (window.matchMedia('(display-mode: standalone)').matches || 
