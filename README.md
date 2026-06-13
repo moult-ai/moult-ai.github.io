@@ -1,259 +1,174 @@
 # Moult AI Web
 
-> Interface web unifiée et élégante pour interroger plusieurs modèles d'intelligence artificielle via une API proxy unique.
+**Multi-provider AI gateway -- A unified interface to interact with multiple AI models through OpenRouter, Groq, and HuggingFace.**
 
-> Elegant and unified web interface to query multiple AI language models through a single proxy API.
-
----
-
-## 🇫🇷 Français
-
-### 📋 Description
-
-**Moult AI Web** est une application web Progressive (PWA) qui offre une interface unifiée et moderne pour interagir avec plusieurs modèles d'IA : Llama, Mistral, Qwen, DeepSeek, Gemma, Nemotron, Phi et bien d'autres. L'application communique via un serveur proxy qui gère les appels à **OpenRouter**, **GroqCloud** et **HuggingFace**.
-
-### ✨ Fonctionnalités
-
-| Fonctionnalité | Description |
-|---|---|
-| 🧠 **Multi-modèles** | Accès à des dizaines de modèles LLM via un seul menu déroulant |
-| 💬 **Chat en streaming** | Réponses en temps réel avec animation de frappe |
-| 🎨 **6 thèmes** | Sombre, Clair, Océan, Forêt, Coucher de soleil, Minuit + Système |
-| 🌍 **12 langues** | FR, EN, ES, DE, IT, PT, JA, ZH-CN, AR (RTL), HI, EL, ZGH (Tamazight) |
-| 📱 **PWA** | Installable, fonctionne hors-ligne (page d'accueil) |
-| 💾 **Historique local** | Conversations sauvegardées dans localStorage (max. 5000) |
-| 📦 **Import / Export** | JSON, JSONL, Markdown, Format Alpaca |
-| 🔍 **Recherche** | Recherche instantanée dans les conversations |
-| 📐 **Responsive** | Adapté mobile, tablette et desktop |
-| 🧩 **Markdown avancé** | Rendu des titres, listes, code, tableaux, liens, images |
-| ⚙️ **Paramètres** | Thème, langue, taille de police, URL proxy personnalisable |
-| 🤖 **Modes de chat** | Assistant, Code, Créatif, Concis, Académique, Debug |
-| ♿ **Accessibilité** | Labels ARIA, navigation clavier, contraste WCAG |
-| 🌐 **SEO** | Meta tags OpenGraph, Twitter Card, JSON-LD, robots.txt |
-| 🔒 **Sécurité** | Protection XSS, HTTPS, CSP compatible |
-
-### 🏗️ Architecture
-
-```
-new/
-├── index.html          # Page principale (PWA, SEO, Meta tags)
-├── css/
-│   └── style.css       # Design System complet (Glassmorphism, 6 thèmes, RTL)
-├── js/
-│   └── script.js       # Logique frontend (chat, dropdowns, stockage, streaming)
-├── images/
-│   ├── logo*.png       # Logos et favicons
-│   ├── logo500-white.png
-│   └── favicon/        # Favicons multi-tailles
-├── manifest.json       # Manifest PWA
-├── sw.js               # Service Worker
-└── install*.sh         # Scripts d'installation du proxy
-```
-
-### 🚀 Installation
-
-#### 1. Serveur Proxy (requis)
-
-Le proxy gère les appels aux APIs d'IA et assure la sécurité des clés API.
-
-```bash
-# Installer avec Node.js
-bash install-with-node.sh
-
-# Installer avec Bun
-bash install-with-bun.sh
-```
-
-#### 2. Configuration
-
-Modifiez l'URL du proxy dans les **Paramètres** de l'application, ou éditez le code :
-
-```javascript
-DEFAULT_SERVER: 'https://api-moult-ai.lombard-web-services.com'
-```
-
-#### 3. Déploiement
-
-Hébergez les fichiers `new/` sur n'importe quel serveur web (Nginx, Apache, Netlify, Vercel, GitHub Pages...).
-
-### 🎨 Thèmes
-
-| Thème | Description |
-|---|---|
-| 🌙 Sombre | Fond sombre avec accents indigo/violet |
-| ☀️ Clair | Fond blanc, textes sombres |
-| 🌊 Océan | Tons bleus apaisants |
-| 🌲 Forêt | Tons verts naturels |
-| 🌅 Coucher de soleil | Tons chauds orange/rouge |
-| 🌌 Minuit | Bleu nuit profond |
-| 💻 Système | Suit les préférences OS |
-
-### 🌍 Langues supportées
-
-| Code | Langue | RTL |
-|---|---|---|
-| `fr` | 🇫🇷 Français | ❌ |
-| `en` | 🇬🇧 English | ❌ |
-| `es` | 🇪🇸 Español | ❌ |
-| `de` | 🇩🇪 Deutsch | ❌ |
-| `it` | 🇮🇹 Italiano | ❌ |
-| `pt` | 🇵🇹 Português | ❌ |
-| `ja` | 🇯🇵 日本語 | ❌ |
-| `zh-CN` | 🇨🇳 简体中文 | ❌ |
-| `ar` | 🇸🇦 العربية | ✅ |
-| `hi` | 🇮🇳 हिंदी | ❌ |
-| `el` | 🇬🇷 Ελληνικά | ❌ |
-| `zgh` | 🇲🇦 ⵜⴰⵎⴰⵣⵉⵖⵜ | ❌ |
-
-### 🧩 Modèles supportés
-
-L'application s'adapte dynamiquement aux modèles fournis par le proxy. Par défaut :
-
-- **OpenRouter** : Nemotron, Llama, Qwen, Gemma, DeepSeek, Poolside, Mistral, Phi...
-- **GroqCloud** : Llama 3.3 70B
-- **HuggingFace** : (selon configuration du proxy)
-
-### 📐 Design System
-
-- **Typographie** : Roboto (principal), Inter (secondaire), JetBrains Mono (code), Noto Sans Arabic (arabe)
-- **Approche visuelle** : Glassmorphism avec backdrop-filter blur
-- **Espacement** : Système de tokens (xs → 2xl)
-- **Border-radius** : sm → full (pill)
-- **Animations** : Transitions fluides avec cubic-bezier
-
-### 🔧 Technologies
-
-- **Frontend** : HTML5, CSS3 (Custom Properties), JavaScript vanilla (ES2022+)
-- **PWA** : Service Worker, Manifest, Splash Screen
-- **Pas de framework** : Zéro dépendance, performance maximale
-
-### 📄 Licence
-
-© 2026 Lombard Web Services — Tous droits réservés
+Developed by [Lombard Web Services](https://lombard-web-services.com) ([@lombardweb](https://github.com/lombardweb))
 
 ---
 
-## 🇬🇧 English
+## Overview
 
-### 📋 Description
+Moult AI Web is a progressive web application that provides a single, clean interface for querying multiple artificial intelligence models from different providers. It is designed to run entirely in the browser with no backend of its own -- it connects to a lightweight proxy server that routes requests to the appropriate AI provider.
 
-**Moult AI Web** is a Progressive Web App (PWA) that provides a unified, modern interface for interacting with multiple AI models: Llama, Mistral, Qwen, DeepSeek, Gemma, Nemotron, Phi, and many more. The application communicates through a proxy server that manages API calls to **OpenRouter**, **GroqCloud**, and **HuggingFace**.
+## Features
 
-### ✨ Features
+- **Multi-provider support** -- OpenRouter, Groq, and HuggingFace models accessible from one interface
+- **Real-time streaming** -- Responses are streamed token by token for instant feedback
+- **6 visual themes** -- Dark, Light, Ocean, Forest, Sunset, and Midnight
+- **12 languages** -- Full internationalization including Arabic (RTL), Chinese, Japanese, Hindi, Greek, and Tifinagh
+- **Progressive Web App** -- Installable on any device, works offline with cached responses
+- **Conversation history** -- All conversations are stored locally in the browser (no server-side storage)
+- **Import and export** -- JSON, JSONL, Markdown, and Alpaca formats supported
+- **Search** -- Full-text search across all stored conversations
+- **Math rendering** -- KaTeX-powered LaTeX formula display
+- **Code blocks** -- Syntax-highlighted code with one-click copy
+- **Responsive design** -- Optimized for mobile, tablet, and desktop
+- **Reasoning display** -- Toggle visibility of model reasoning chains when supported
+- **System theme detection** -- Automatically matches your OS appearance setting
 
-| Feature | Description |
-|---|---|
-| 🧠 **Multi-model** | Access dozens of LLMs through a single dropdown |
-| 💬 **Streaming chat** | Real-time responses with typing animation |
-| 🎨 **6 themes** | Dark, Light, Ocean, Forest, Sunset, Midnight + System |
-| 🌍 **12 languages** | FR, EN, ES, DE, IT, PT, JA, ZH-CN, AR (RTL), HI, EL, ZGH (Tamazight) |
-| 📱 **PWA** | Installable, works offline (home page) |
-| 💾 **Local history** | Conversations saved in localStorage (max 5000) |
-| 📦 **Import / Export** | JSON, JSONL, Markdown, Alpaca format |
-| 🔍 **Search** | Instant search across conversations |
-| 📐 **Responsive** | Mobile, tablet, and desktop optimized |
-| 🧩 **Advanced Markdown** | Headings, lists, code blocks, tables, links, images |
-| ⚙️ **Settings** | Theme, language, font size, custom proxy URL |
-| 🤖 **Chat modes** | Assistant, Code, Creative, Concise, Academic, Debug |
-| ♿ **Accessibility** | ARIA labels, keyboard navigation, WCAG contrast |
-| 🌐 **SEO** | OpenGraph meta, Twitter Card, JSON-LD, robots.txt |
-| 🔒 **Security** | XSS protection, HTTPS, CSP compatible |
-
-### 🏗️ Architecture
+## Architecture
 
 ```
-new/
-├── index.html          # Main page (PWA, SEO, Meta tags)
-├── css/
-│   └── style.css       # Complete Design System (Glassmorphism, 6 themes, RTL)
-├── js/
-│   └── script.js       # Frontend logic (chat, dropdowns, storage, streaming)
-├── images/
-│   ├── logo*.png       # Logos and favicons
-│   ├── logo500-white.png
-│   └── favicon/        # Multi-size favicons
-├── manifest.json       # PWA Manifest
-├── sw.js               # Service Worker
-└── install*.sh         # Proxy installation scripts
+Browser (PWA)
+  |
+  +-- index.html / css / js  (static frontend)
+  |
+  +-- sw.js                  (service worker for offline + caching)
+  |
+  +-- manifest.json          (PWA manifest)
+  |
+  v
+Proxy Server (Node.js)
+  |
+  +-- /api/models            (model listing per provider)
+  +-- /api/chat              (streaming chat completions)
+  |
+  v
+AI Providers
+  +-- OpenRouter
+  +-- Groq
+  +-- HuggingFace
 ```
 
-### 🚀 Installation
+## Getting Started
 
-#### 1. Proxy Server (required)
+### Local Development
 
-The proxy handles AI API calls and secures API keys.
+A Python development server is included:
 
 ```bash
-# Install with Node.js
-bash install-with-node.sh
-
-# Install with Bun
-bash install-with-bun.sh
+python3 server.py
 ```
 
-#### 2. Configuration
+This starts a local server at `http://localhost:8000`. You can specify a different port:
 
-Change the proxy URL in the app **Settings**, or edit the code:
+```bash
+python3 server.py 3000
+```
+
+To bind on all network interfaces (for testing on mobile devices):
+
+```bash
+python3 server.py --host 0.0.0.0
+```
+
+### Production Deployment
+
+1. Serve the project files from any static web server (Nginx, Apache, Caddy, etc.)
+2. Ensure the proxy server is running and accessible
+3. Update the proxy URL in the application settings if needed
+4. The PWA will be automatically available for installation once served over HTTPS
+
+### Proxy Server
+
+The proxy server handles API key management and routes requests to the appropriate AI provider. See `install-moult-ai-proxy.sh` for setup instructions.
+
+## Configuration
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| Proxy URL | `https://api-moult-ai.lombard-web-services.com` | Backend proxy endpoint |
+| Theme | Dark | Visual theme (6 options) |
+| Font size | 14px | Interface text size (12-20px) |
+| Export format | JSON | Format for conversation export |
+
+All settings are persisted in the browser's localStorage.
+
+## Supported Models
+
+Models are fetched dynamically from the proxy server. The default fallback list (used when the API is unavailable) contains:
+
+**OpenRouter:**
+- nvidia/nemotron-3-nano-30b-a3b:free
+- nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free
+- nvidia/nemotron-nano-12b-v2-vl:free
+- nvidia/nemotron-3-ultra-550b-a55b:free
+- poolside/laguna-m.1:free
+
+**Groq:**
+- llama-3.3-70b-versatile
+
+## Adding or Removing Models
+
+Models are filtered through an `ALLOWED_MODELS` constant at the top of `js/script.js`. This is the single source of truth for which models appear on the site, regardless of what the proxy API returns.
+
+### 1. The allowed models list
+
+Find the `ALLOWED_MODELS` constant near the top of the file:
 
 ```javascript
-DEFAULT_SERVER: 'https://api-moult-ai.lombard-web-services.com'
+const ALLOWED_MODELS = {
+    openrouter: [
+        'nvidia/nemotron-3-nano-30b-a3b:free',
+        'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
+        'nvidia/nemotron-nano-12b-v2-vl:free',
+        'nvidia/nemotron-3-ultra-550b-a55b:free',
+        'poolside/laguna-m.1:free'
+    ],
+    groq: ['llama-3.3-70b-versatile'],
+    hf: []
+};
 ```
 
-#### 3. Deployment
+To add a model, append its identifier to the appropriate provider array. To remove one, delete the corresponding line. The `fetchModels()` function filters the API response against this list, so only models present here will appear in the dropdown and on the welcome screen.
 
-Host the `new/` directory on any web server (Nginx, Apache, Netlify, Vercel, GitHub Pages...).
+### 2. Model name display
 
-### 🎨 Themes
+The `simplifyModelName` function controls how model names are shortened in the UI. If you add a new model family, you can add a mapping entry to make the display name cleaner:
 
-| Theme | Description |
-|---|---|
-| 🌙 Dark | Dark background with indigo/violet accents |
-| ☀️ Light | White background, dark text |
-| 🌊 Ocean | Calming blue tones |
-| 🌲 Forest | Natural green tones |
-| 🌅 Sunset | Warm orange/red tones |
-| 🌌 Midnight | Deep night blue |
-| 💻 System | Follows OS preferences |
+```javascript
+const map = {
+    'nemotron': 'Nemotron',
+    'llama': 'Llama',
+    // Add your own mappings here
+};
+```
 
-### 🌍 Supported Languages
+### Model identifier format
 
-| Code | Language | RTL |
-|---|---|---|
-| `fr` | 🇫🇷 Français | No |
-| `en` | 🇬🇧 English | No |
-| `es` | 🇪🇸 Español | No |
-| `de` | 🇩🇪 Deutsch | No |
-| `it` | 🇮🇹 Italiano | No |
-| `pt` | 🇵🇹 Português | No |
-| `ja` | 🇯🇵 日本語 | No |
-| `zh-CN` | 🇨🇳 简体中文 | No |
-| `ar` | 🇸🇦 العربية | ✅ |
-| `hi` | 🇮🇳 हिंदी | No |
-| `el` | 🇬🇷 Ελληνικά | No |
-| `zgh` | 🇲🇦 ⵜⴰⵎⴰⵣⵉⵖⵜ | No |
+The model identifier follows the format `provider/model-name`. For OpenRouter models, the format is `openrouter/vendor/model-name:variant`. For Groq models, it is simply `groq/model-name`.
 
-### 🧩 Supported Models
+## Technical Details
 
-The app dynamically adapts to models provided by the proxy. Default:
+- **Frontend**: Vanilla JavaScript (no framework dependencies), HTML5, CSS3 with custom properties
+- **Styling**: Glassmorphism design system with CSS custom properties for theming
+- **Offline**: Service worker with stale-while-revalidate caching strategy
+- **Storage**: Browser localStorage for conversations, settings, and preferences
+- **Math**: KaTeX for LaTeX rendering
+- **Build**: No build step required -- runs directly from source files
 
-- **OpenRouter**: Nemotron, Llama, Qwen, Gemma, DeepSeek, Poolside, Mistral, Phi...
-- **GroqCloud**: Llama 3.3 70B
-- **HuggingFace**: (depends on proxy configuration)
+## Browser Support
 
-### 📐 Design System
+- Chrome 90+
+- Firefox 90+
+- Safari 15+
+- Edge 90+
+- Mobile browsers (iOS Safari, Chrome for Android)
 
-- **Typography**: Roboto (primary), Inter (secondary), JetBrains Mono (code), Noto Sans Arabic (Arabic)
-- **Visual approach**: Glassmorphism with backdrop-filter blur
-- **Spacing**: Token system (xs → 2xl)
-- **Border-radius**: sm → full (pill)
-- **Animations**: Smooth transitions with cubic-bezier
+## License
 
-### 🔧 Technologies
+Copyright (c) Lombard Web Services. All rights reserved.
 
-- **Frontend**: HTML5, CSS3 (Custom Properties), vanilla JavaScript (ES2022+)
-- **PWA**: Service Worker, Manifest, Splash Screen
-- **No framework**: Zero dependencies, maximum performance
+## Author
 
-### 📄 License
-
-© 2026 Lombard Web Services — All rights reserved
+Developed by [Lombard Web Services](https://lombard-web-services.com)
