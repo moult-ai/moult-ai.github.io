@@ -81,7 +81,7 @@ python3 server.py --host 0.0.0.0
 
 ### Serveur proxy
 
-Le serveur proxy gere les cles API et dirige les requetes vers le fournisseur IA approprie. Voir `install-moult-ai-proxy.sh` pour les instructions d'installation.
+Le serveur proxy gere les cles API et dirige les requetes vers le fournisseur IA approprie. Voir `install-with-node.sh` pour les instructions d'installation avec nodeJS et `install-with-bun.sh` pour la version Bun (AVX2).
 
 ## Configuration
 
