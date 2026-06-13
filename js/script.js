@@ -1,5 +1,5 @@
 /**
- * Moult AI Web — Frontend Controller v4
+ * Moult AI Web — Frontend Controller v5
  * Full i18n, offline detection, proper code blocks, math, custom dropdowns, PWA auto-update, delete all conversations
  */
 
@@ -409,12 +409,7 @@ function applyTranslations() {
     const qas = document.querySelectorAll('.quick-action span:last-child');
     const qaKeys = ['quickConcept', 'quickDebug', 'quickEmail', 'quickTranslate'];
     qas.forEach((s, i) => { if (qaKeys[i]) s.textContent = t(qaKeys[i]); });
-    const installBtn = $('install-accept');
-    if (installBtn) installBtn.textContent = t('installBtn');
-    const installDismiss = $('install-dismiss');
-    if (installDismiss) installDismiss.textContent = t('installLater');
-    const installSpan = document.querySelector('.install-banner-text span');
-    if (installSpan) installSpan.textContent = t('installTitle');
+
     const settingsTitle = document.querySelector('#settings-modal .modal-header h2');
     if (settingsTitle) settingsTitle.textContent = t('paramTitle');
     const langTitle = document.querySelector('#language-modal .modal-header h2');
@@ -454,7 +449,7 @@ const el = {};
 function $(id) { return document.getElementById(id); }
 
 // ==========================================
-// CUSTOM DROPDOWNS
+// CUSTOM DROPDOWNS - VERSION CORRIGÉE (positionnement fixe)
 // ==========================================
 function createCustomDropdown(selectId, dropdownId, options, onChange, openUp = false, fullWidth = false) {
     const trigger = document.getElementById(selectId);
@@ -471,21 +466,19 @@ function createCustomDropdown(selectId, dropdownId, options, onChange, openUp = 
         currentOptions.forEach(opt => {
             const div = document.createElement('div');
             div.className = 'custom-option';
-            // Tronquer les longs noms de modèles sur mobile
             let displayLabel = opt.label || opt;
             if (window.innerWidth <= 768 && displayLabel.length > 35) {
                 displayLabel = displayLabel.substring(0, 32) + '...';
             }
             div.textContent = displayLabel;
             div.dataset.value = opt.value || opt;
-            div.title = opt.label || opt; // Tooltip avec nom complet
+            div.title = opt.label || opt;
             
             if (div.dataset.value === currentValue) div.classList.add('selected');
             
             div.addEventListener('click', (e) => {
                 e.stopPropagation();
                 currentValue = div.dataset.value;
-                // Afficher le nom complet dans le sélecteur
                 const fullLabel = opt.label || opt;
                 if (selectedText) selectedText.textContent = fullLabel;
                 
@@ -502,56 +495,72 @@ function createCustomDropdown(selectId, dropdownId, options, onChange, openUp = 
             dropdown.appendChild(div);
         });
         
-        if (!fullWidth && trigger) {
+        if (fullWidth) {
+            dropdown.style.width = '100%';
+            dropdown.style.minWidth = '100%';
+        } else if (trigger && window.innerWidth > 768) {
             dropdown.style.minWidth = trigger.offsetWidth + 'px';
+            dropdown.style.width = 'auto';
         }
-        // Sur mobile, éviter que le dropdown soit trop large
+        
         if (window.innerWidth <= 768) {
             dropdown.style.maxWidth = (window.innerWidth - 32) + 'px';
+            dropdown.style.minWidth = '200px';
         }
     }
 
     function positionDropdown() {
         if (!dropdown.classList.contains('open')) return;
         
-        const rect = trigger.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
-        const dropdownHeight = Math.min(dropdown.scrollHeight, 280);
+        if (fullWidth) {
+            // Format dropdown in settings — full width, opens upward
+            dropdown.style.top = 'auto';
+            dropdown.style.bottom = 'calc(100% + 4px)';
+            dropdown.style.left = '0';
+            dropdown.style.right = '0';
+            dropdown.style.width = '100%';
+            dropdown.style.minWidth = '100%';
+            dropdown.style.transform = 'none';
+            return;
+        }
         
+        // Align left edge of dropdown with left edge of trigger
+        const wrapper = trigger.closest('.custom-select-wrapper') || trigger.parentElement;
+        if (!wrapper) return;
+        
+        const wrapperRect = wrapper.getBoundingClientRect();
+        const triggerRect = trigger.getBoundingClientRect();
+        const leftOffset = triggerRect.left - wrapperRect.left;
+        
+        // Vertical positioning
         if (openUp) {
-            const spaceAbove = rect.top;
-            if (spaceAbove > dropdownHeight + 10) {
-                dropdown.style.top = 'auto';
-                dropdown.style.bottom = '100%';
-                dropdown.style.top = '';
-            } else {
-                dropdown.style.bottom = '';
-                dropdown.style.top = 'calc(100% + 4px)';
-            }
+            dropdown.style.top = '';
+            dropdown.style.bottom = 'calc(100% + 4px)';
         } else {
-            const spaceBelow = viewportHeight - rect.bottom;
-            if (spaceBelow < dropdownHeight + 10 && rect.top > dropdownHeight + 10) {
-                dropdown.style.top = 'auto';
-                dropdown.style.bottom = '100%';
-            } else {
-                dropdown.style.bottom = '';
-                dropdown.style.top = 'calc(100% + 4px)';
-            }
+            dropdown.style.bottom = '';
+            dropdown.style.top = 'calc(100% + 4px)';
         }
         
-        if (!fullWidth) {
-            let left = rect.left;
-            const dropdownWidth = dropdown.offsetWidth;
-            if (left + dropdownWidth > window.innerWidth - 10) {
-                left = window.innerWidth - dropdownWidth - 10;
+        // Horizontal: left-aligned with trigger
+        dropdown.style.left = leftOffset + 'px';
+        dropdown.style.transform = 'none';
+        dropdown.style.right = 'auto';
+        dropdown.style.width = 'auto';
+        
+        // Prevent viewport overflow (check after render)
+        requestAnimationFrame(() => {
+            const ddRect = dropdown.getBoundingClientRect();
+            const overRight = ddRect.right - (window.innerWidth - 8);
+            if (overRight > 0) {
+                dropdown.style.left = Math.max(8, leftOffset - overRight) + 'px';
             }
-            if (left < 10) left = 10;
-            dropdown.style.left = left + 'px';
-            dropdown.style.right = 'auto';
-        }
+            const ddRect2 = dropdown.getBoundingClientRect();
+            if (ddRect2.left < 8) {
+                dropdown.style.left = '8px';
+            }
+        });
     }
 
-    // Fermer les dropdowns au clic en dehors
     function closeDropdownOnClickOutside(e) {
         if (!trigger.contains(e.target) && !dropdown.contains(e.target)) {
             dropdown.classList.remove('open');
@@ -564,7 +573,6 @@ function createCustomDropdown(selectId, dropdownId, options, onChange, openUp = 
         e.preventDefault();
         const isOpen = dropdown.classList.contains('open');
         
-        // Fermer tous les autres dropdowns
         document.querySelectorAll('.custom-dropdown').forEach(d => {
             if (d !== dropdown) d.classList.remove('open');
         });
@@ -576,7 +584,6 @@ function createCustomDropdown(selectId, dropdownId, options, onChange, openUp = 
             dropdown.classList.add('open');
             trigger.classList.add('open');
             renderOptions();
-            // Petit délai pour que le rendu soit fait avant le positionnement
             setTimeout(positionDropdown, 10);
         } else {
             dropdown.classList.remove('open');
@@ -590,15 +597,14 @@ function createCustomDropdown(selectId, dropdownId, options, onChange, openUp = 
     window.removeEventListener('resize', positionDropdown);
     window.addEventListener('resize', () => {
         if (dropdown.classList.contains('open')) {
-            positionDropdown();
+            setTimeout(positionDropdown, 10);
         }
     });
     
-    // Écouter les changements d'orientation
-    window.removeEventListener('orientationchange', positionDropdown);
-    window.addEventListener('orientationchange', () => {
+    window.removeEventListener('scroll', positionDropdown);
+    window.addEventListener('scroll', () => {
         if (dropdown.classList.contains('open')) {
-            setTimeout(positionDropdown, 50);
+            setTimeout(positionDropdown, 10);
         }
     });
 
@@ -612,7 +618,7 @@ function createCustomDropdown(selectId, dropdownId, options, onChange, openUp = 
 }
 
 function initCustomDropdowns() {
-    // Model dropdown (inline width)
+    // Model dropdown (s'ouvre vers le bas - normal)
     const modelOptions = [];
     Object.keys(state.models).forEach(provider => {
         if (state.models[provider] && state.models[provider].length) {
@@ -635,7 +641,7 @@ function initCustomDropdowns() {
         state.currentModel = modelParts.join(':');
     }, false, false);
     
-    // Mode dropdown (opens upward, inline width)
+    // Mode dropdown (s'ouvre vers le HAUT)
     const modeOptions = [
         { value: 'default', label: '🤖 Assistant' },
         { value: 'coding', label: '💻 Code' },
@@ -652,7 +658,7 @@ function initCustomDropdowns() {
         if (selectedText) selectedText.textContent = modeMap[value] || value;
     }, true, false);
     
-    // Format dropdown (full width, opens upward)
+    // Format dropdown (full width, s'ouvre vers le HAUT)
     const formatOptions = [
         { value: 'json', label: 'JSON' },
         { value: 'jsonl', label: 'JSONL' },
@@ -737,22 +743,19 @@ function setupOfflineDetection() {
     function update() {
         const offline = !navigator.onLine;
         if (offline && !wasOffline) {
-            bar.textContent = '📡 ' + t('offline');
+            bar.textContent = t('offline');
             bar.className = 'offline-bar';
             bar.style.display = 'block';
         }
         if (!offline && wasOffline) {
-            bar.textContent = t('online');
-            bar.className = 'offline-bar online-bar';
-            bar.style.display = 'block';
-            setTimeout(() => { bar.style.display = 'none'; }, 3000);
+            bar.style.display = 'none';
         }
         wasOffline = offline;
     }
     window.addEventListener('online', update);
     window.addEventListener('offline', update);
     if (!navigator.onLine) {
-        bar.textContent = '📡 ' + t('offline');
+        bar.textContent = t('offline');
         bar.className = 'offline-bar';
         bar.style.display = 'block';
     }
@@ -764,14 +767,12 @@ function setupOfflineDetection() {
 function setupPWAUpdate() {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.ready.then(registration => {
-            // Check for updates every hour
             setInterval(() => {
                 registration.update();
                 console.log('[App] Checking for SW updates...');
             }, 60 * 60 * 1000);
         });
         
-        // Listen for messages from service worker
         navigator.serviceWorker.addEventListener('message', event => {
             if (event.data && event.data.type === 'UPDATE_AVAILABLE') {
                 console.log('[App] Update available, reloading...');
@@ -782,7 +783,6 @@ function setupPWAUpdate() {
             }
         });
         
-        // Check for update on page load
         navigator.serviceWorker.ready.then(registration => {
             registration.update();
         });
@@ -792,17 +792,38 @@ function setupPWAUpdate() {
 // ==========================================
 // MODELS
 // ==========================================
+const ALLOWED_MODELS = {
+    openrouter: [
+        'nvidia/nemotron-3-nano-30b-a3b:free',
+        'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
+        'nvidia/nemotron-nano-12b-v2-vl:free',
+        'nvidia/nemotron-3-ultra-550b-a55b:free',
+        'poolside/laguna-m.1:free'
+    ],
+    groq: [
+        'llama-3.3-70b-versatile'
+    ],
+    hf: []
+};
+
 async function fetchModels() {
     try {
         const res = await fetch(`${state.settings.serverUrl}/api/models`);
         if (!res.ok) throw new Error('Failed');
         const data = await res.json();
-        state.models = data.models || {};
+        const rawModels = data.models || {};
+        // Filter to only allowed models
+        state.models = {};
+        Object.keys(ALLOWED_MODELS).forEach(provider => {
+            const allowed = ALLOWED_MODELS[provider];
+            const available = rawModels[provider] || [];
+            state.models[provider] = allowed.filter(m => available.includes(m));
+        });
         updateModelDropdown();
         updateProviderStatus(data.providers || {});
         populateModelChips();
     } catch (e) {
-        state.models = { openrouter: ['nvidia/nemotron-3-nano-30b-a3b:free','nvidia/nemotron-3.5-content-safety:free','nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free','nvidia/nemotron-nano-12b-v2-vl:free','nvidia/nemotron-3-ultra-550b-a55b:free','poolside/laguna-m.1:free','google/gemma-4-26b-a4b-it:free','qwen/qwen3-next-80b-a3b-instruct:free'], groq: ['llama-3.3-70b-versatile'], hf: [] };
+        state.models = JSON.parse(JSON.stringify(ALLOWED_MODELS));
         updateModelDropdown();
         populateModelChips();
         updateProviderStatus({ openrouter: false, groq: false, hf: false });
@@ -855,15 +876,18 @@ function updateModelDropdown() {
             });
             dropdown.appendChild(div);
         });
-        dropdown.style.minWidth = trigger.offsetWidth + 'px';
+        // Set min-width only when not open (CSS handles centering when open)
+        if (!dropdown.classList.contains('open') && trigger) {
+            dropdown.style.minWidth = trigger.offsetWidth + 'px';
+        }
     }
 }
 
 function populateModelChips() { 
     if (!el.modelChips) return; 
     const all = []; 
-    Object.values(state.models).forEach(m => { if (m) m.slice(0, 3).forEach(x => all.push(x)); }); 
-    el.modelChips.innerHTML = all.slice(0, 8).map(m => `<span class="chip">${simplifyModelName(m)}</span>`).join(''); 
+    Object.values(state.models).forEach(m => { if (m) m.forEach(x => all.push(x)); }); 
+    el.modelChips.innerHTML = all.map(m => `<span class="chip">${simplifyModelName(m)}</span>`).join(''); 
 }
 
 function simplifyModelName(model) {
@@ -1128,8 +1152,6 @@ function addMessageToConversation(role, content, meta = {}) { const conv = getCu
 function loadConversation(id) { const conv = state.conversations.find(c => c.id === id); if (!conv) return; state.currentConversationId = id; el.welcomeScreen.style.display = 'none'; el.messagesArea.classList.add('active'); el.messagesArea.innerHTML = ''; conv.messages.forEach(m => renderMessage(m.role, m.content, m)); renderHistory(); scrollToBottom(); if (window.innerWidth <= 768) closeSidebar(); }
 function deleteConversation(id, event) { event.stopPropagation(); state.conversations = state.conversations.filter(c => c.id !== id); if (state.currentConversationId === id) startNewChat(); saveConversations(); renderHistory(); showToast(t('convDeleted'), 'success'); }
 
-// Note: clearCurrentChat has been replaced by clearAllConversations for the trash icon
-// The old clearCurrentChat (which only cleared current chat) is kept for potential use
 function clearCurrentChat() { 
     const conv = getCurrentConversation(); 
     if (conv) { 
@@ -1362,7 +1384,7 @@ function formatMarkdown(text) {
     html = html.replace(/^\|(.+)\|$/gm, (m, content) => {
         const cells = content.split('|').map(c => c.trim());
         if (cells.every(c => /^[-:]+$/.test(c))) return '%%TSEP%%';
-        return '<tr>' + cells.map(c => `<tr>${c}</table>`).join('') + '</tr>';
+        return '<tr>' + cells.map(c => `<td>${c}</td>`).join('') + '</tr>';
     });
     html = html.replace(/((?:<tr>[\s\S]*?<\/tr>\n?%%TSEP%%?\n?)+)/g, (m) => {
         const cleaned = m.replace(/%%TSEP%%\n?/g, '');
@@ -1370,9 +1392,9 @@ function formatMarkdown(text) {
         if (firstRowMatch) {
             const thead = '<thead>' + firstRowMatch[0] + '</thead>';
             const tbody = '<tbody>' + cleaned.replace(firstRowMatch[0], '') + '</tbody>';
-            return '</td>' + thead + tbody + '</table>';
+            return '<td>' + thead + tbody + '</table>';
         }
-        return '<table>' + cleaned + '</table>';
+        return '</table>' + cleaned + '</table>';
     });
 
     // 12) Links and images
@@ -1419,7 +1441,7 @@ async function sendMessage() {
         removeTypingIndicator(typingId);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         await handleStreamResponse(res);
-    } catch (error) { removeTypingIndicator(typingId); showToast(`Error: ${error.message}`, 'error'); state.isLoading = false; el.sendBtn.disabled = false; }
+    } catch (error) { removeTypingIndicator(typingId); if (navigator.onLine) showToast(`Error: ${error.message}`, 'error'); state.isLoading = false; el.sendBtn.disabled = false; }
 }
 
 async function handleStreamResponse(res) {
@@ -1462,3 +1484,17 @@ function showToast(message, type = 'info') {
 function scrollToBottom() { requestAnimationFrame(() => { el.chatContainer?.scrollTo({ top: el.chatContainer.scrollHeight, behavior: 'smooth' }); }); }
 function escapeHtml(text) { const d = document.createElement('div'); d.textContent = text; return d.innerHTML; }
 function applyTheme(theme) { document.documentElement.setAttribute('data-theme', theme); localStorage.setItem('moult-theme', theme); state.settings.theme = theme; }
+
+// ==========================================
+// RESET FUNCTION (pour debugging)
+// ==========================================
+function resetApp() {
+    localStorage.clear();
+    sessionStorage.clear();
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(regs => {
+            regs.forEach(reg => reg.unregister());
+        });
+    }
+    window.location.reload();
+}
