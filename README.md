@@ -81,7 +81,7 @@ python3 server.py --host 0.0.0.0
 
 ### Proxy Server
 
-The proxy server handles API key management and routes requests to the appropriate AI provider. See `install-moult-ai-proxy.sh` for setup instructions.
+The proxy server handles API key management and routes requests to the appropriate AI provider. See `install-with-node.sh` for setup instructions or `install-with-bun.sh` for bun (AVX2).
 
 ## Configuration
 
@@ -89,7 +89,9 @@ The proxy server handles API key management and routes requests to the appropria
 |---------|---------|-------------|
 | Proxy URL | `https://api-moult-ai.lombard-web-services.com` | Backend proxy endpoint |
 | Theme | Dark | Visual theme (6 options) |
-| Font size | 14px | Interface text size (12-20px) |
+| Font size | 14px | Interface text size (12-20px) |ls through OpenRouter, Groq, and HuggingFace.
+
+Developed by Lombard Web Services (@lombardweb)
 | Export format | JSON | Format for conversation export |
 
 All settings are persisted in the browser's localStorage.
