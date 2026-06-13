@@ -1,395 +1,13 @@
 /**
  * Moult AI Web — Frontend Controller v5
  * Full i18n, offline detection, proper code blocks, math, custom dropdowns, PWA auto-update, delete all conversations
+ *
+ * Translations are loaded from js/i18n.js (I18N, LANG_FLAGS, RTL_LANGS, currentLang, t)
  */
 
 // ==========================================
-// INTERNATIONALIZATION (i18n)
+// INTERNATIONALIZATION (i18n) — applyTranslations
 // ==========================================
-const I18N = {
-    fr: {
-        newChat: 'Nouveau chat', search: 'Rechercher', import: 'Importer', history: 'Historique',
-        welcomeTitle: 'Bienvenue sur Moult AI Web',
-        welcomeDesc: 'Interrogez plusieurs modèles d\'intelligence artificielle via une interface unifiée',
-        placeholder: 'Posez votre question...', send: 'Envoyer', settings: 'Paramètres',
-        export: 'Exporter', clear: 'Effacer', copy: 'Copier', copied: 'Copié',
-        noHistory: 'Aucune conversation', noResults: 'Aucun résultat pour',
-        importSuccess: 'conversation(s) importée(s)', themeLabel: '🎨 Thème',
-        proxyUrl: 'URL du serveur proxy', fontSize: 'Taille de police',
-        exportFormat: '📦 Format d\'import / export', urlUpdated: 'URL mise à jour',
-        themeChanged: 'Thème :', langChanged: 'Langue :', titleModified: 'Titre modifié',
-        convDeleted: 'Conversation supprimée', convCleared: 'Conversation effacée',
-        newConv: 'Nouvelle conversation', rename: 'Renommer', delete: 'Supprimer',
-        offline: '📡 Mode hors ligne — Les réponses IA ne sont pas disponibles',
-        online: '✅ Connexion rétablie', reasoning: '🧠 Raisonnement',
-        enterToSend: 'Entrée pour envoyer · Maj+Entrée pour nouvelle ligne',
-        quickConcept: 'Expliquer un concept', quickDebug: 'Aider au debugging',
-        quickEmail: 'Rédiger un email', quickTranslate: 'Traduire',
-        availableModels: 'Modèles disponibles', installTitle: 'Installer Moult AI Web',
-        installBtn: 'Installer', installLater: 'Plus tard', askAI: 'Poser une question à l\'IA...',
-        copyCode: 'Copier', loading: 'Chargement...', mode: 'Mode',
-        selectLang: '🌍 Choisir la langue', paramTitle: '⚙️ Paramètres',
-        exportLabel: 'Format d\'export', searchPlaceholder: 'Rechercher dans les conversations...',
-        aiLabel: 'Moult AI Web', youLabel: 'Vous',
-        deleteAllTitle: '🗑️ Supprimer toutes les conversations',
-        deleteAllConfirm: 'Êtes-vous sûr de vouloir supprimer TOUTES vos conversations ?',
-        deleteAllWarning: '⚠️ Cette action est irréversible et supprimera définitivement tout votre historique.',
-        cancel: 'Annuler',
-        confirmDelete: 'Oui, tout supprimer',
-        allConversationsDeleted: 'Toutes les conversations ont été supprimées'
-    },
-    en: {
-        newChat: 'New chat', search: 'Search', import: 'Import', history: 'History',
-        welcomeTitle: 'Welcome to Moult AI Web',
-        welcomeDesc: 'Query multiple AI models through a unified interface',
-        placeholder: 'Ask your question...', send: 'Send', settings: 'Settings',
-        export: 'Export', clear: 'Clear', copy: 'Copy', copied: 'Copied',
-        noHistory: 'No conversations', noResults: 'No results for',
-        importSuccess: 'conversation(s) imported', themeLabel: '🎨 Theme',
-        proxyUrl: 'Proxy server URL', fontSize: 'Font size',
-        exportFormat: '📦 Import / export format', urlUpdated: 'URL updated',
-        themeChanged: 'Theme:', langChanged: 'Language:', titleModified: 'Title modified',
-        convDeleted: 'Conversation deleted', convCleared: 'Conversation cleared',
-        newConv: 'New conversation', rename: 'Rename', delete: 'Delete',
-        offline: '📡 Offline mode — AI responses unavailable',
-        online: '✅ Connection restored', reasoning: '🧠 Reasoning',
-        enterToSend: 'Enter to send · Shift+Enter for new line',
-        quickConcept: 'Explain a concept', quickDebug: 'Help debugging',
-        quickEmail: 'Write an email', quickTranslate: 'Translate',
-        availableModels: 'Available models', installTitle: 'Install Moult AI Web',
-        installBtn: 'Install', installLater: 'Later', askAI: 'Ask AI a question...',
-        copyCode: 'Copy', loading: 'Loading...', mode: 'Mode',
-        selectLang: '🌍 Choose language', paramTitle: '⚙️ Settings',
-        exportLabel: 'Export format', searchPlaceholder: 'Search conversations...',
-        aiLabel: 'Moult AI Web', youLabel: 'You',
-        deleteAllTitle: '🗑️ Delete all conversations',
-        deleteAllConfirm: 'Are you sure you want to delete ALL your conversations?',
-        deleteAllWarning: '⚠️ This action is irreversible and will permanently delete all your history.',
-        cancel: 'Cancel',
-        confirmDelete: 'Yes, delete all',
-        allConversationsDeleted: 'All conversations have been deleted'
-    },
-    es: {
-        newChat: 'Nuevo chat', search: 'Buscar', import: 'Importar', history: 'Historial',
-        welcomeTitle: 'Bienvenido a Moult AI Web',
-        welcomeDesc: 'Consulta múltiples modelos de IA a través de una interfaz unificada',
-        placeholder: 'Haz tu pregunta...', send: 'Enviar', settings: 'Ajustes',
-        export: 'Exportar', clear: 'Limpiar', copy: 'Copiar', copied: 'Copiado',
-        noHistory: 'Sin conversaciones', noResults: 'Sin resultados para',
-        importSuccess: 'conversación(es) importada(s)', themeLabel: '🎨 Tema',
-        proxyUrl: 'URL del proxy', fontSize: 'Tamaño de fuente',
-        exportFormat: '📦 Formato de importación', urlUpdated: 'URL actualizada',
-        themeChanged: 'Tema:', langChanged: 'Idioma:', titleModified: 'Título modificado',
-        convDeleted: 'Conversación eliminada', convCleared: 'Conversación limpiada',
-        newConv: 'Nueva conversación', rename: 'Renombrar', delete: 'Eliminar',
-        offline: '📡 Modo sin conexión — IA no disponible',
-        online: '✅ Conexión restaurada', reasoning: '🧠 Razonamiento',
-        enterToSend: 'Enter para enviar · Shift+Enter nueva línea',
-        quickConcept: 'Explicar un concepto', quickDebug: 'Ayudar a depurar',
-        quickEmail: 'Redactar un email', quickTranslate: 'Traducir',
-        availableModels: 'Modelos disponibles', installTitle: 'Instalar Moult AI Web',
-        installBtn: 'Instalar', installLater: 'Más tarde', askAI: 'Pregunta a la IA...',
-        copyCode: 'Copiar', loading: 'Cargando...', mode: 'Modo',
-        selectLang: '🌍 Elegir idioma', paramTitle: '⚙️ Ajustes',
-        exportLabel: 'Formato de export', searchPlaceholder: 'Buscar conversaciones...',
-        aiLabel: 'Moult AI Web', youLabel: 'Tú',
-        deleteAllTitle: '🗑️ Eliminar todas las conversaciones',
-        deleteAllConfirm: '¿Estás seguro de que quieres eliminar TODAS tus conversaciones?',
-        deleteAllWarning: '⚠️ Esta acción es irreversible y eliminará permanentemente todo tu historial.',
-        cancel: 'Cancelar',
-        confirmDelete: 'Sí, eliminar todo',
-        allConversationsDeleted: 'Todas las conversaciones han sido eliminadas'
-    },
-    de: {
-        newChat: 'Neuer Chat', search: 'Suchen', import: 'Importieren', history: 'Verlauf',
-        welcomeTitle: 'Willkommen bei Moult AI Web',
-        welcomeDesc: 'Abfragen Sie mehrere KI-Modelle über eine einheitliche Schnittstelle',
-        placeholder: 'Ihre Frage eingeben...', send: 'Senden', settings: 'Einstellungen',
-        export: 'Exportieren', clear: 'Löschen', copy: 'Kopieren', copied: 'Kopiert',
-        noHistory: 'Keine Konversationen', noResults: 'Keine Ergebnisse für',
-        importSuccess: 'Konversation(en) importiert', themeLabel: '🎨 Thema',
-        proxyUrl: 'Proxy-URL', fontSize: 'Schriftgröße',
-        exportFormat: '📦 Import-/Export-Format', urlUpdated: 'URL aktualisiert',
-        themeChanged: 'Thema:', langChanged: 'Sprache:', titleModified: 'Titel geändert',
-        convDeleted: 'Konversation gelöscht', convCleared: 'Konversation geleert',
-        newConv: 'Neue Konversation', rename: 'Umbenennen', delete: 'Löschen',
-        offline: '📡 Offline-Modus — KI nicht verfügbar',
-        online: '✅ Verbindung wiederhergestellt', reasoning: '🧠 Denken',
-        enterToSend: 'Enter zum Senden · Shift+Enter für neue Zeile',
-        quickConcept: 'Konzept erklären', quickDebug: 'Fehlerbehebung',
-        quickEmail: 'E-Mail verfassen', quickTranslate: 'Übersetzen',
-        availableModels: 'Verfügbare Modelle', installTitle: 'Moult AI Web installieren',
-        installBtn: 'Installieren', installLater: 'Später', askAI: 'KI fragen...',
-        copyCode: 'Kopieren', loading: 'Laden...', mode: 'Modus',
-        selectLang: '🌍 Sprache wählen', paramTitle: '⚙️ Einstellungen',
-        exportLabel: 'Export-Format', searchPlaceholder: 'Konversationen suchen...',
-        aiLabel: 'Moult AI Web', youLabel: 'Du',
-        deleteAllTitle: '🗑️ Alle Konversationen löschen',
-        deleteAllConfirm: 'Sind Sie sicher, dass Sie ALLE Ihre Konversationen löschen möchten?',
-        deleteAllWarning: '⚠️ Diese Aktion ist irreversibel und löscht dauerhaft Ihren gesamten Verlauf.',
-        cancel: 'Abbrechen',
-        confirmDelete: 'Ja, alles löschen',
-        allConversationsDeleted: 'Alle Konversationen wurden gelöscht'
-    },
-    it: {
-        newChat: 'Nuova chat', search: 'Cerca', import: 'Importa', history: 'Cronologia',
-        welcomeTitle: 'Benvenuto su Moult AI Web',
-        welcomeDesc: 'Interroga più modelli di IA tramite un\'interfaccia unificata',
-        placeholder: 'Fai la tua domanda...', send: 'Invia', settings: 'Impostazioni',
-        export: 'Esporta', clear: 'Cancella', copy: 'Copia', copied: 'Copiato',
-        noHistory: 'Nessuna conversazione', noResults: 'Nessun risultato per',
-        importSuccess: 'conversazione(i) importate', themeLabel: '🎨 Tema',
-        proxyUrl: 'URL del proxy', fontSize: 'Dimensione font',
-        exportFormat: '📦 Formato import/esport', urlUpdated: 'URL aggiornato',
-        themeChanged: 'Tema:', langChanged: 'Lingua:', titleModified: 'Titolo modificato',
-        convDeleted: 'Conversazione eliminata', convCleared: 'Conversazione cancellata',
-        newConv: 'Nuova conversazione', rename: 'Rinomina', delete: 'Elimina',
-        offline: '📡 Modalità offline — IA non disponibile',
-        online: '✅ Connessione ripristinata', reasoning: '🧠 Ragionamento',
-        enterToSend: 'Invio per inviare · Shift+Invio per nuova riga',
-        quickConcept: 'Spiegare un concetto', quickDebug: 'Aiutare al debug',
-        quickEmail: 'Scrivere una email', quickTranslate: 'Tradurre',
-        availableModels: 'Modelli disponibili', installTitle: 'Installa Moult AI Web',
-        installBtn: 'Installa', installLater: 'Dopo', askAI: 'Chiedi all\'IA...',
-        copyCode: 'Copia', loading: 'Caricamento...', mode: 'Modalità',
-        selectLang: '🌍 Scegli lingua', paramTitle: '⚙️ Impostazioni',
-        exportLabel: 'Formato export', searchPlaceholder: 'Cerca conversazioni...',
-        aiLabel: 'Moult AI Web', youLabel: 'Tu',
-        deleteAllTitle: '🗑️ Elimina tutte le conversazioni',
-        deleteAllConfirm: 'Sei sicuro di voler eliminare TUTTE le tue conversazioni?',
-        deleteAllWarning: '⚠️ Questa azione è irreversibile e cancellerà definitivamente tutta la tua cronologia.',
-        cancel: 'Annulla',
-        confirmDelete: 'Sì, elimina tutto',
-        allConversationsDeleted: 'Tutte le conversazioni sono state eliminate'
-    },
-    pt: {
-        newChat: 'Novo chat', search: 'Pesquisar', import: 'Importar', history: 'Histórico',
-        welcomeTitle: 'Bem-vindo ao Moult AI Web',
-        welcomeDesc: 'Consulte vários modelos de IA através de uma interface unificada',
-        placeholder: 'Faça sua pergunta...', send: 'Enviar', settings: 'Configurações',
-        export: 'Exportar', clear: 'Limpar', copy: 'Copiar', copied: 'Copiado',
-        noHistory: 'Sem conversas', noResults: 'Sem resultados para',
-        importSuccess: 'conversa(s) importada(s)', themeLabel: '🎨 Tema',
-        proxyUrl: 'URL do proxy', fontSize: 'Tamanho da fonte',
-        exportFormat: '📦 Formato de importação', urlUpdated: 'URL atualizada',
-        themeChanged: 'Tema:', langChanged: 'Idioma:', titleModified: 'Título modificado',
-        convDeleted: 'Conversa excluída', convCleared: 'Conversa limpa',
-        newConv: 'Nova conversa', rename: 'Renomear', delete: 'Excluir',
-        offline: '📡 Modo offline — IA indisponível',
-        online: '✅ Conexão restaurada', reasoning: '🧠 Raciocínio',
-        enterToSend: 'Enter para enviar · Shift+Enter nova linha',
-        quickConcept: 'Explicar um conceito', quickDebug: 'Ajudar no debug',
-        quickEmail: 'Redigir um email', quickTranslate: 'Traduzir',
-        availableModels: 'Modelos disponíveis', installTitle: 'Instalar Moult AI Web',
-        installBtn: 'Instalar', installLater: 'Depois', askAI: 'Perguntar à IA...',
-        copyCode: 'Copiar', loading: 'Carregando...', mode: 'Modo',
-        selectLang: '🌍 Escolher idioma', paramTitle: '⚙️ Configurações',
-        exportLabel: 'Formato de export', searchPlaceholder: 'Pesquisar conversas...',
-        aiLabel: 'Moult AI Web', youLabel: 'Você',
-        deleteAllTitle: '🗑️ Excluir todas as conversas',
-        deleteAllConfirm: 'Tem certeza que deseja excluir TODAS as suas conversas?',
-        deleteAllWarning: '⚠️ Esta ação é irreversível e excluirá permanentemente todo o seu histórico.',
-        cancel: 'Cancelar',
-        confirmDelete: 'Sim, excluir tudo',
-        allConversationsDeleted: 'Todas as conversas foram excluídas'
-    },
-    ja: {
-        newChat: '新しいチャット', search: '検索', import: 'インポート', history: '履歴',
-        welcomeTitle: 'Moult AI Web へようこそ',
-        welcomeDesc: '統一インターフェースで複数のAIモデルに質問できます',
-        placeholder: '質問を入力...', send: '送信', settings: '設定',
-        export: 'エクスポート', clear: 'クリア', copy: 'コピー', copied: 'コピー済み',
-        noHistory: '会話なし', noResults: '該当なし：',
-        importSuccess: '件の会話をインポート', themeLabel: '🎨 テーマ',
-        proxyUrl: 'プロキシURL', fontSize: 'フォントサイズ',
-        exportFormat: '📦 インポート/エクスポート形式', urlUpdated: 'URL更新済み',
-        themeChanged: 'テーマ:', langChanged: '言語:', titleModified: 'タイトル変更',
-        convDeleted: '会話を削除', convCleared: '会話をクリア',
-        newConv: '新しい会話', rename: '名前変更', delete: '削除',
-        offline: '📡 オフラインモード — AI応答なし',
-        online: '✅ 接続復旧', reasoning: '🧠 思考',
-        enterToSend: 'Enterで送信 · Shift+Enterで改行',
-        quickConcept: '概念を説明', quickDebug: 'デバッグを助ける',
-        quickEmail: 'メールを書く', quickTranslate: '翻訳する',
-        availableModels: '利用可能なモデル', installTitle: 'Moult AI Web をインストール',
-        installBtn: 'インストール', installLater: '後で', askAI: 'AIに質問...',
-        copyCode: 'コピー', loading: '読み込み中...', mode: 'モード',
-        selectLang: '🌍 言語を選択', paramTitle: '⚙️ 設定',
-        exportLabel: 'エクスポート形式', searchPlaceholder: '会話を検索...',
-        aiLabel: 'Moult AI Web', youLabel: 'あなた',
-        deleteAllTitle: '🗑️ すべての会話を削除',
-        deleteAllConfirm: '本当にすべての会話を削除してもよろしいですか？',
-        deleteAllWarning: '⚠️ この操作は元に戻せず、履歴が完全に削除されます。',
-        cancel: 'キャンセル',
-        confirmDelete: 'はい、すべて削除',
-        allConversationsDeleted: 'すべての会話が削除されました'
-    },
-    'zh-CN': {
-        newChat: '新对话', search: '搜索', import: '导入', history: '历史',
-        welcomeTitle: '欢迎使用 Moult AI Web',
-        welcomeDesc: '通过统一界面查询多个AI模型',
-        placeholder: '输入您的问题...', send: '发送', settings: '设置',
-        export: '导出', clear: '清空', copy: '复制', copied: '已复制',
-        noHistory: '暂无对话', noResults: '没有找到结果：',
-        importSuccess: '个对话已导入', themeLabel: '🎨 主题',
-        proxyUrl: '代理服务器URL', fontSize: '字体大小',
-        exportFormat: '📦 导入/导出格式', urlUpdated: 'URL已更新',
-        themeChanged: '主题：', langChanged: '语言：', titleModified: '标题已修改',
-        convDeleted: '对话已删除', convCleared: '对话已清空',
-        newConv: '新对话', rename: '重命名', delete: '删除',
-        offline: '📡 离线模式 — AI不可用',
-        online: '✅ 连接已恢复', reasoning: '🧠 思考',
-        enterToSend: '按回车发送 · Shift+回车换行',
-        quickConcept: '解释概念', quickDebug: '帮助调试',
-        quickEmail: '写邮件', quickTranslate: '翻译',
-        availableModels: '可用模型', installTitle: '安装 Moult AI Web',
-        installBtn: '安装', installLater: '稍后', askAI: '向AI提问...',
-        copyCode: '复制', loading: '加载中...', mode: '模式',
-        selectLang: '🌍 选择语言', paramTitle: '⚙️ 设置',
-        exportLabel: '导出格式', searchPlaceholder: '搜索对话...',
-        aiLabel: 'Moult AI Web', youLabel: '你',
-        deleteAllTitle: '🗑️ 删除所有对话',
-        deleteAllConfirm: '您确定要删除所有对话吗？',
-        deleteAllWarning: '⚠️ 此操作不可逆，将永久删除您的所有历史记录。',
-        cancel: '取消',
-        confirmDelete: '是的，全部删除',
-        allConversationsDeleted: '所有对话已删除'
-    },
-    ar: {
-        newChat: 'محادثة جديدة', search: 'بحث', import: 'استيراد', history: 'السجل',
-        welcomeTitle: 'مرحبًا بك في Moult AI Web',
-        welcomeDesc: 'اسأل نماذج الذكاء الاصطناعي المتعددة من خلال واجهة موحدة',
-        placeholder: 'اكتب سؤالك...', send: 'إرسال', settings: 'الإعدادات',
-        export: 'تصدير', clear: 'مسح', copy: 'نسخ', copied: 'تم النسخ',
-        noHistory: 'لا توجد محادثات', noResults: 'لا توجد نتائج لـ',
-        importSuccess: 'محادثة(ات) مستوردة', themeLabel: '🎨 المظهر',
-        proxyUrl: 'رابط الخادم الوسيط', fontSize: 'حجم الخط',
-        exportFormat: '📦 تنسيق الاستيراد/التصدير', urlUpdated: 'تم تحديث الرابط',
-        themeChanged: 'المظهر:', langChanged: 'اللغة:', titleModified: 'تم تعديل العنوان',
-        convDeleted: 'تم حذف المحادثة', convCleared: 'تم مسح المحادثة',
-        newConv: 'محادثة جديدة', rename: 'إعادة تسمية', delete: 'حذف',
-        offline: '📡 وضع عدم الاتصال — الذكاء الاصطناعي غير متاح',
-        online: '✅ تم استعادة الاتصال', reasoning: '🧠 التفكير',
-        enterToSend: 'Enter للإرسال · Shift+Enter لسطر جديد',
-        quickConcept: 'شرح مفهوم', quickDebug: 'المساعدة في debugging',
-        quickEmail: 'كتابة بريد إلكتروني', quickTranslate: 'ترجمة',
-        availableModels: 'النماذج المتاحة', installTitle: 'تثبيت Moult AI Web',
-        installBtn: 'تثبيت', installLater: 'لاحقًا', askAI: 'اسأل الذكاء الاصطناعي...',
-        copyCode: 'نسخ', loading: 'جارٍ التحميل...', mode: 'الوضع',
-        selectLang: '🌍 اختر اللغة', paramTitle: '⚙️ الإعدادات',
-        exportLabel: 'تنسيق التصدير', searchPlaceholder: 'البحث في المحادثات...',
-        aiLabel: 'Moult AI Web', youLabel: 'أنت',
-        deleteAllTitle: '🗑️ حذف جميع المحادثات',
-        deleteAllConfirm: 'هل أنت متأكد من حذف جميع محادثاتك؟',
-        deleteAllWarning: '⚠️ هذا الإجراء لا رجعة فيه وسيحذف سجلك بالكامل.',
-        cancel: 'إلغاء',
-        confirmDelete: 'نعم، حذف الكل',
-        allConversationsDeleted: 'تم حذف جميع المحادثات'
-    },
-    hi: {
-        newChat: 'नई चैट', search: 'खोजें', import: 'आयात', history: 'इतिहास',
-        welcomeTitle: 'Moult AI Web पर आपका स्वागत है',
-        welcomeDesc: 'एक एकीकृत इंटरफ़ेस के माध्यम से कई AI मॉडल से पूछें',
-        placeholder: 'अपना प्रश्न दर्ज करें...', send: 'भेजें', settings: 'सेटिंग्स',
-        export: 'निर्यात', clear: 'साफ़ करें', copy: 'कॉपी', copied: 'कॉपी किया',
-        noHistory: 'कोई बातचीत नहीं', noResults: 'कोई परिणाम नहीं',
-        importSuccess: 'बातचीत आयात की गई', themeLabel: '🎨 थीम',
-        proxyUrl: 'प्रॉक्सी URL', fontSize: 'फ़ॉन्ट आकार',
-        exportFormat: '📦 आयात/निर्यात प्रारूप', urlUpdated: 'URL अपडेट',
-        themeChanged: 'थीम:', langChanged: 'भाषा:', titleModified: 'शीर्षक बदला',
-        convDeleted: 'बातचीत हटाई', convCleared: 'बातचीत साफ़',
-        newConv: 'नई बातचीत', rename: 'नाम बदलें', delete: 'हटाएं',
-        offline: '📡 ऑफ़लाइन मोड — AI उपलब्ध नहीं',
-        online: '✅ कनेक्शन बहाल', reasoning: '🧠 सोच',
-        enterToSend: 'Enter से भेजें · Shift+Enter नई पंक्ति',
-        quickConcept: 'अवधारणा समझाएं', quickDebug: 'डीबग में मदद',
-        quickEmail: 'ईमेल लिखें', quickTranslate: 'अनुवाद करें',
-        availableModels: 'उपलब्ध मॉडल', installTitle: 'Moult AI Web इंस्टॉल करें',
-        installBtn: 'इंस्टॉल', installLater: 'बाद में', askAI: 'AI से पूछें...',
-        copyCode: 'कॉपी', loading: 'लोड हो रहा है...', mode: 'मोड',
-        selectLang: '🌍 भाषा चुनें', paramTitle: '⚙️ सेटिंग्स',
-        exportLabel: 'निर्यात प्रारूप', searchPlaceholder: 'बातचीत खोजें...',
-        aiLabel: 'Moult AI Web', youLabel: 'आप',
-        deleteAllTitle: '🗑️ सभी बातचीत हटाएं',
-        deleteAllConfirm: 'क्या आप अपनी सभी बातचीत हटाना चाहते हैं?',
-        deleteAllWarning: '⚠️ यह क्रिया अपरिवर्तनीय है और आपका पूरा इतिहास हटा देगी।',
-        cancel: 'रद्द करें',
-        confirmDelete: 'हाँ, सब हटाएं',
-        allConversationsDeleted: 'सभी बातचीत हटा दी गईं'
-    },
-    el: {
-        newChat: 'Νέα συνομιλία', search: 'Αναζήτηση', import: 'Εισαγωγή', history: 'Ιστορικό',
-        welcomeTitle: 'Καλώς ήρθατε στο Moult AI Web',
-        welcomeDesc: 'Ρωτήστε πολλά μοντέλα AI μέσω ενός ενοποιημένου περιβάλλοντος',
-        placeholder: 'Κάντε την ερώτησή σας...', send: 'Αποστολή', settings: 'Ρυθμίσεις',
-        export: 'Εξαγωγή', clear: 'Καθαρισμός', copy: 'Αντιγραφή', copied: 'Αντιγράφηκε',
-        noHistory: 'Καμία συνομιλία', noResults: 'Κανένα αποτέλεσμα για',
-        importSuccess: 'συνομιλία(ες) εισήχθησαν', themeLabel: '🎨 Θέμα',
-        proxyUrl: 'URL proxy', fontSize: 'Μέγεθος γραμματοσειράς',
-        exportFormat: '📦 Μορφή εισαγωγής/εξαγωγής', urlUpdated: 'URL ενημερώθηκε',
-        themeChanged: 'Θέμα:', langChanged: 'Γλώσσα:', titleModified: 'Τίτλος τροποποιήθηκε',
-        convDeleted: 'Η συνομιλία διαγράφηκε', convCleared: 'Η συνομιλία εκκαθαρίστηκε',
-        newConv: 'Νέα συνομιλία', rename: 'Μετονομασία', delete: 'Διαγραφή',
-        offline: '📡 Offline — AI μη διαθέσιμο',
-        online: '✅ Σύνδεση αποκαταστάθηκε', reasoning: '🧠 Σκέψη',
-        enterToSend: 'Enter για αποστολή · Shift+Enter νέα γραμμή',
-        quickConcept: 'Εξήγηση έννοιας', quickDebug: 'Βοήθεια debug',
-        quickEmail: 'Σύνταξη email', quickTranslate: 'Μετάφραση',
-        availableModels: 'Διαθέσιμα μοντέλα', installTitle: 'Εγκατάσταση Moult AI Web',
-        installBtn: 'Εγκατάσταση', installLater: 'Αργότερα', askAI: 'Ρωτήστε AI...',
-        copyCode: 'Αντιγραφή', loading: 'Φόρτωση...', mode: 'Λειτουργία',
-        selectLang: '🌍 Επιλογή γλώσσας', paramTitle: '⚙️ Ρυθμίσεις',
-        exportLabel: 'Μορφή εξαγωγής', searchPlaceholder: 'Αναζήτηση συνομιλιών...',
-        aiLabel: 'Moult AI Web', youLabel: 'Εσείς',
-        deleteAllTitle: '🗑️ Διαγραφή όλων των συνομιλιών',
-        deleteAllConfirm: 'Είστε σίγουροι ότι θέλετε να διαγράψετε ΟΛΕΣ τις συνομιλίες σας;',
-        deleteAllWarning: '⚠️ Αυτή η ενέργεια είναι μη αναστρέψιμη και θα διαγράψει οριστικά όλο το ιστορικό σας.',
-        cancel: 'Ακύρωση',
-        confirmDelete: 'Ναι, διαγραφή όλων',
-        allConversationsDeleted: 'Όλες οι συνομιλίες διαγράφηκαν'
-    },
-    zgh: {
-        newChat: 'Asnas n tmawlit', search: 'Nadi', import: 'Kter', history: 'Amagrad',
-        welcomeTitle: 'Anzuɣ ɣef Moult AI Web',
-        welcomeDesc: 'Ssaɣal i yimodelen n ubrid amazight deg ummid yuhan',
-        placeholder: 'Sken-iyi wayek i tettwaγra...', send: 'Aznzer', settings: 'Iɣewwaren',
-        export: 'Sifeḍ', clear: 'Sfeḍ', copy: 'Nɣel', copied: 'Yettwaɣel',
-        noHistory: 'Ulac asnas', noResults: 'Ulac amaḍal i',
-        importSuccess: 'asnas yettwakter', themeLabel: '🎨 Asentel',
-        proxyUrl: 'URL n proxy', fontSize: 'Tiddi n tisura',
-        exportFormat: '📦 Amawḍu n ukter/sifeḍ', urlUpdated: 'URL yettwahdid',
-        themeChanged: 'Asentel:', langChanged: 'Tutlayt:', titleModified: 'Azwel yettwabeddel',
-        convDeleted: 'Asnas yettwakkes', convCleared: 'Asnas yettwasfeḍ',
-        newConv: 'Asnas amaynut', rename: 'Beddel azwel', delete: 'Kkes',
-        offline: '📡 Adublu mačči tuqqna — AI ulac-it',
-        online: '✅ Tuqqna tettwearzel', reasoning: '🧠 Asmagar',
-        enterToSend: 'Enter i waznzer · Shift+Enter agraw amaynut',
-        quickConcept: 'Aderr-d tawtilt', quickDebug: '協助 debug',
-        quickEmail: 'Aru-d email', quickTranslate: 'Sken tutlayt',
-        availableModels: 'Imodelen i yellan', installTitle: 'Sbedd Moult AI Web',
-        installBtn: 'Sbedd', installLater: 'Syeffas', askAI: 'Ssaɣal i AI...',
-        copyCode: 'Nɣel', loading: 'Yessali...', mode: 'Askara',
-        selectLang: '🌍 Fren tutlayt', paramTitle: '⚙️ Iɣewwaren',
-        exportLabel: 'Amawḍu n usifeḍ', searchPlaceholder: 'Nadi deg yimasnas...',
-        aiLabel: 'Moult AI Web', youLabel: 'D-k',
-        deleteAllTitle: '🗑️ Kkes akk imasnas',
-        deleteAllConfirm: 'Tcetkeḍ ad tekkseḍ akk imasnas-nnek?',
-        deleteAllWarning: '⚠️ Ayagi ur d ittuɣal ara, arak ad tveṛḍeḍ akk amezruy-nnek.',
-        cancel: 'Sefsex',
-        confirmDelete: 'Ih, kkes akk',
-        allConversationsDeleted: 'Kkent akk imasnas'
-    }
-};
-
-const LANG_FLAGS = {
-    fr: '🇫🇷', en: '🇬🇧', es: '🇪🇸', de: '🇩🇪', it: '🇮🇹', pt: '🇵🇹',
-    ja: '🇯🇵', 'zh-CN': '🇨🇳', ar: '🇸🇦', hi: '🇮🇳', el: '🇬🇷', zgh: '🇲🇦'
-};
-
-const RTL_LANGS = ['ar'];
-let currentLang = localStorage.getItem('moult-lang') || 'fr';
-
-function t(key) { return (I18N[currentLang] && I18N[currentLang][key]) || I18N.fr[key] || key; }
 
 function applyTranslations() {
     document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -703,6 +321,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     applyTranslations();
     setupOfflineDetection();
     setupPWAUpdate();
+    setupA2HS();
     el.messageInput?.focus();
     enforceHistoryTitleStyles();
 });
@@ -787,6 +406,64 @@ function setupPWAUpdate() {
             registration.update();
         });
     }
+}
+
+// ==========================================
+// A2HS (ADD TO HOME SCREEN) BANNER
+// ==========================================
+let deferredInstallPrompt = null;
+
+function setupA2HS() {
+    const banner = document.getElementById('a2hs-banner');
+    const installBtn = document.getElementById('a2hs-install');
+    const laterBtn = document.getElementById('a2hs-later');
+
+    if (!banner || !installBtn || !laterBtn) return;
+
+    // Do not show if already installed (standalone)
+    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+        return;
+    }
+
+    // Capture the install prompt
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+
+        // Show banner after a short delay for elegance
+        setTimeout(() => {
+            banner.classList.add('visible');
+        }, 2500);
+    });
+
+    // Install button click
+    installBtn.addEventListener('click', async () => {
+        if (!deferredInstallPrompt) return;
+        deferredInstallPrompt.prompt();
+        const { outcome } = await deferredInstallPrompt.userChoice;
+        console.log('[A2HS] User choice:', outcome);
+        deferredInstallPrompt = null;
+        banner.classList.remove('visible');
+        if (outcome === 'accepted') {
+            showToast(t('installSuccess') || 'Application installee', 'success');
+        }
+    });
+
+    // Later button click — just hide, will reappear on next reload
+    laterBtn.addEventListener('click', () => {
+        banner.classList.add('hiding');
+        banner.classList.remove('visible');
+        setTimeout(() => {
+            banner.classList.remove('hiding');
+        }, 500);
+    });
+
+    // Hide banner when app gets installed
+    window.addEventListener('appinstalled', () => {
+        banner.classList.remove('visible');
+        banner.classList.remove('hiding');
+        deferredInstallPrompt = null;
+    });
 }
 
 // ==========================================
