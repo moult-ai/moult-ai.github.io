@@ -310,6 +310,12 @@
                 <button class="lang-option-btn" data-lang="hi">🇮🇳 हिंदी</button>
                 <button class="lang-option-btn" data-lang="el">🇬🇷 Ελληνικά</button>
                 <button class="lang-option-btn" data-lang="zgh">🇲🇦 ⵜⴰⵎⴰⵣⵉⵖⵜ</button>
+                <button class="lang-option-btn" data-lang="he" dir="rtl">🇮🇱 עברית</button>
+                <button class="lang-option-btn" data-lang="uk">🇺🇦 Українська</button>
+                <button class="lang-option-btn" data-lang="ru">🇷🇺 Русский</button>
+                <button class="lang-option-btn" data-lang="ar-MA" dir="rtl">🇲🇦 الدارجة</button>
+                <button class="lang-option-btn" data-lang="th">🇹🇭 ไทย</button>
+                <button class="lang-option-btn" data-lang="sv">🇸🇪 Svenska</button>
             </div>
         </div>
     </div>
@@ -325,6 +331,23 @@
             <div class="modal-body">
                 <input type="text" id="search-input" class="search-field" placeholder="Rechercher dans les conversations...">
                 <div class="search-results" id="search-results"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- A2HS Install Banner -->
+    <div class="a2hs-banner" id="a2hs-banner">
+        <div class="a2hs-content">
+            <div class="a2hs-icon">
+                <img src="images/logo48.png" alt="Moult AI Web" class="a2hs-logo">
+            </div>
+            <div class="a2hs-text">
+                <div class="a2hs-title" data-i18n="installTitle">Installer Moult AI Web</div>
+                <div class="a2hs-subtitle" data-i18n="installSubtitle">Ajoutez Moult AI Web a votre ecran d accueil pour un acces rapide</div>
+            </div>
+            <div class="a2hs-actions">
+                <button class="a2hs-btn a2hs-later" id="a2hs-later" data-i18n="installLater">Plus tard</button>
+                <button class="a2hs-btn a2hs-install" id="a2hs-install" data-i18n="installBtn">Installer</button>
             </div>
         </div>
     </div>
@@ -351,6 +374,7 @@
             </div>
         </div>
     </div>
+    <script src="js/i18n.js"></script>
     <script src="js/script.js"></script>
     <script>
         // Service Worker registration with better PWA support
