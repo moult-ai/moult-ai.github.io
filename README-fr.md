@@ -15,7 +15,7 @@ Moult AI Web est une application web progressive qui fournit une interface uniqu
 - **Multi-fournisseurs** -- Modeles OpenRouter, Groq et HuggingFace accessibles depuis une seule interface
 - **Diffusion en temps reel** -- Les reponses sont diffusees token par token pour un retour instantane
 - **6 themes visuels** -- Sombre, Clair, Ocean, Foret, Coucher de soleil et Minuit
-- **12 langues** -- Internationalisation complete incluant l'arabe (RTL), le chinois, le japonais, l'hindi, le grec et le tifinagh
+- **18 langues** -- Internationalisation complete incluant l'arabe (RTL), le chinois, le japonais, l'hindi, le grec et le tifinagh
 - **Application web progressive** -- Installable sur tout appareil, fonctionne hors ligne avec les reponses en cache
 - **Historique des conversations** -- Toutes les conversations sont stockees localement dans le navigateur (pas de stockage cote serveur)
 - **Import et export** -- Formats JSON, JSONL, Markdown et Alpaca supportes
