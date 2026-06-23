@@ -169,11 +169,11 @@ The model identifier follows the format `provider/model-name`. For OpenRouter mo
 
 ## License
 
-Copyright (c) MIT License Lombard Web Services. All rights reserved.
+Copyright (c) MIT License Lombard Web Services. Some rights reserved.
 
 ## Author
 
-Developed by [Lombard Web Services](https://lombard-web-services.com) helped with Xiaomi Mimo refactorisation
+Developed by [Lombard Web Services](https://lombard-web-services.com) and refactored with love  :heart:  on XiaomiMiMo
 
 ## Credits
-Mimo 2.5 .
+XiaomiMiMo 2.5 .
